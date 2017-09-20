@@ -1,0 +1,16 @@
+.buildlog
+.DS_Store
+.idea
+.pub/
+.settings/
+build/
+packages
+.packages
+.atom/
+.packages
+ios/.generated/
+pubspec.lock
+.flutter-plugins
+local.properties
+.xcconfig
+.gradle
