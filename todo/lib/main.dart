@@ -91,7 +91,11 @@ class _TodoState extends State<TodoList> {
 
   void _showSaveOptions(String value) {
     setState(() {
-      _userIsTyping = true;
+      if (value.length > 0) {
+        _userIsTyping = true;
+      } else {
+        _userIsTyping = false;
+      }
     });
   }
 
@@ -109,21 +113,24 @@ class _TodoState extends State<TodoList> {
             fit: FlexFit.loose,
             child: new Container(
               alignment: FractionalOffset.topLeft,
-              child: new TextFormField(
+              child: new TextField(
                 style: new TextStyle(
-                  color: Colors.grey,
-                  fontSize: 50.0,
+                  color: Colors.red,
+                  fontSize: 30.0,
                 ),
                 decoration: new InputDecoration(
                   hintText: 'Add a note',
                   hideDivider: true,
                   hintStyle: new TextStyle(
                     color: Colors.grey,
-                    fontSize: 30.0, // Throws an error if you don't specify
+                    fontSize: 28.0, // Throws an error if you don't specify
                   ),
                 ),
-                maxLines: 2,
-                //onChanged: (value) => _showSaveOptions(value),
+                maxLines: null,
+                // TODO(maryx) this should be set to null pending bug fix in flutter
+                // https://github.com/flutter/flutter/issues/12046
+                keyboardType: TextInputType.multiline,
+                onChanged: (value) => _showSaveOptions(value),
               ),
             ),
           ),
@@ -134,7 +141,7 @@ class _TodoState extends State<TodoList> {
                 size: 50.0,
               ),
               new Offstage(
-                offstage: !_userIsTyping,
+                offstage: _userIsTyping,
                 child: new Icon(
                   Icons.check,
                   size: 50.0,
@@ -148,76 +155,76 @@ class _TodoState extends State<TodoList> {
 
     for (var i in _items) {
       _todoItems.add(new Container(
-          color: Colors.green[50],
-          margin: const EdgeInsets.only(
-            left: 8.0,
-            right: 8.0,
-            top: 8.0,
-          ),
-          padding: const EdgeInsets.all(16.0),
-          child: new Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              new Flexible(
-                fit: FlexFit.loose,
-                child: new Container(
-                  child: new Text(
-                    i,
-                    softWrap: true,
-                    style: new TextStyle(
-                      color: Colors.grey[800],
-                      fontSize: 30.0,
-                    ),
+        color: Colors.green[50],
+        margin: const EdgeInsets.only(
+          left: 8.0,
+          right: 8.0,
+          top: 8.0,
+        ),
+        padding: const EdgeInsets.all(16.0),
+        child: new Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            new Flexible(
+              fit: FlexFit.loose,
+              child: new Container(
+                child: new Text(
+                  i,
+                  softWrap: true,
+                  style: new TextStyle(
+                    color: Colors.grey[800],
+                    fontSize: 30.0,
                   ),
                 ),
               ),
-              new Row(
-                children: <Widget>[
-                  new Icon(Icons.check),
-                  new Icon(Icons.edit),
-                  new Icon(Icons.delete_forever),
-                ],
-              ),
-            ],
-          ),
+            ),
+            new Row(
+              children: <Widget>[
+                new Icon(Icons.check),
+                new Icon(Icons.edit),
+                new Icon(Icons.delete_forever),
+              ],
+            ),
+          ],
+        ),
       ));
     }
 
     for (var i in _done) {
       _doneItems.add(new Container(
-          color: Colors.grey[100],
-          margin: const EdgeInsets.only(
-            left: 8.0,
-            right: 8.0,
-            top: 8.0,
-          ),
-          padding: const EdgeInsets.all(16.0),
-          child: new Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              new Flexible(
-                fit: FlexFit.loose,
-                child: new Container(
-                  child: new Text(
-                    i,
-                    softWrap: true,
-                    style: new TextStyle(
-                      color: Colors.grey[500],
-                      fontSize: 30.0,
-                    ),
+        color: Colors.grey[100],
+        margin: const EdgeInsets.only(
+          left: 8.0,
+          right: 8.0,
+          top: 8.0,
+        ),
+        padding: const EdgeInsets.all(16.0),
+        child: new Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            new Flexible(
+              fit: FlexFit.loose,
+              child: new Container(
+                child: new Text(
+                  i,
+                  softWrap: true,
+                  style: new TextStyle(
+                    color: Colors.grey[500],
+                    fontSize: 30.0,
                   ),
                 ),
               ),
-              new Row(
-                children: <Widget>[
-                  new Icon(Icons.undo),
-                  new Icon(Icons.delete_forever),
-                ],
-              ),
-            ],
-          ),
+            ),
+            new Row(
+              children: <Widget>[
+                new Icon(Icons.undo),
+                new Icon(Icons.delete_forever),
+              ],
+            ),
+          ],
+        ),
       ));
     }
 
@@ -258,20 +265,16 @@ class _TodoState extends State<TodoList> {
       data: new ThemeData(
         canvasColor: Colors.blueGrey[50],
       ),
-      // TODO(maryx) remove this stack
-      child: new Stack(
-        children: <Widget>[
-          new Scaffold(
-            body: _currentPage,
-            bottomNavigationBar: new BottomNavigationBar(
-              items: navBarItems,
-              fixedColor: Colors.green,
-              onTap: (value) => _chooseList(value),
-              type: BottomNavigationBarType.fixed,
-            ),
-            resizeToAvoidBottomPadding: false,
-          ),
-        ],
+      child:
+      new Scaffold(
+        body: _currentPage,
+        bottomNavigationBar: new BottomNavigationBar(
+          items: navBarItems,
+          fixedColor: Colors.green,
+          onTap: (value) => _chooseList(value),
+          type: BottomNavigationBarType.fixed,
+        ),
+        resizeToAvoidBottomPadding: false,
       ),
     );
   }
