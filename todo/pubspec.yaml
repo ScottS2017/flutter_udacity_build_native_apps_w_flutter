@@ -4,6 +4,7 @@ description: To-Do list
 dependencies:
   flutter:
     sdk: flutter
+  cloud_firestore: '^0.0.3'
 
 dev_dependencies:
   flutter_test:
