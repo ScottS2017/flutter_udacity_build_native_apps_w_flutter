@@ -5,6 +5,7 @@ dependencies:
   flutter:
     sdk: flutter
   cloud_firestore: '^0.0.3'
+  firebase_storage: '^0.0.7'
 
 dev_dependencies:
   flutter_test:

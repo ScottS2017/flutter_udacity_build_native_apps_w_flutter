@@ -6,7 +6,6 @@ void main() {
 }
 
 class TodoApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
@@ -21,6 +20,13 @@ class TodoApp extends StatelessWidget {
 }
 
 class TodoHome extends StatelessWidget {
+  ListTile _getTaskItem(DocumentSnapshot document) {
+    return new ListTile(
+      title: new Text(document['title']),
+      leading: document['image'] == null ? null : new Image.network(document['image']),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -52,9 +58,7 @@ class TodoHome extends StatelessWidget {
                       (BuildContext context, int index) {
                     if (index >= snapshot.data.documents.length)
                       return null;
-                    return new ListTile(
-                      title: new Text(snapshot.data.documents[index]['title']),
-                    );
+                    return _getTaskItem(snapshot.data.documents[index]);
                   },
                 ),
               ),
