@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -35,12 +36,34 @@ class TodoApp extends StatelessWidget {
   }
 }
 
-class TodoHome extends StatelessWidget {
+class TodoHome extends StatefulWidget {
+  @override
+  TodoHomeState createState() => new TodoHomeState();
+}
+
+class TodoHomeState extends State<TodoHome> {
+  bool _showDone = false;
+
+  Stream<QuerySnapshot> get snapshots {
+    Query query = Firestore.instance.collection('tasks');
+    if (_showDone) {
+      query = query.where('done', isEqualTo: true);
+    } else {
+      query = query.where('done', isEqualTo: false);
+    }
+    return query.snapshots;
+  }
+
   Widget _getTaskItem(DocumentSnapshot document) {
     return new Container(
       color: TodoColors.background,
       child: new ListTile(
-        title: new Text(document['title']),
+        title: new Text(
+          document['title'],
+          style: new TextStyle(
+            color: document['done'] ? TodoColors.done : null,
+          ),
+        ),
         leading: document['image'] == null
             ? null
             : new Image.network(document['image']),
@@ -69,9 +92,11 @@ class TodoHome extends StatelessWidget {
             children: <Widget>[
               new Expanded(
                 child: new InkWell(
-                  child: new Text('show done'),
+                  child: new Text(_showDone ? 'show active' : 'show done'),
                   onTap: () {
-                    // do something
+                    setState(() {
+                      _showDone = !_showDone;
+                    });
                   },
                 ),
               ),
@@ -86,13 +111,14 @@ class TodoHome extends StatelessWidget {
         ),
       ),
       body: new StreamBuilder(
-        stream: Firestore.instance.collection('tasks').snapshots,
+        stream: snapshots,
         builder: (context, snapshot) {
           if (!snapshot.hasData) return new Text('Loading...');
           return new CustomScrollView(
             slivers: [
               new SliverAppBar(
                 pinned: true,
+                automaticallyImplyLeading: false,
                 expandedHeight: kAppBarExpandedHeight,
                 flexibleSpace: new DecoratedBox(
                   decoration: new BoxDecoration(
