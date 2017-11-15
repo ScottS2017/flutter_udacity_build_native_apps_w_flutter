@@ -15,20 +15,25 @@ class Todo extends StatelessWidget {
         appBar: new AppBar(
           title: new Text("ToDo")
         ),
-        body: new StreamBuilder(
+        body: new StreamBuilder<QuerySnapshot>(
           stream: Firestore.instance.collection('tasks').snapshots,
-          builder: (context, snapshot) {
+          builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (!snapshot.hasData) return new Text('Loading...');
             return new ListView(
-              children: snapshot.data.documents.map((document) {
-                return new ListTile(
-                  title: new Text(document['title']),
-                );
+              children: snapshot.data.documents.map((DocumentSnapshot document) {
+                return getTaskItem(document);
               }).toList(),
             );
           },
         ),
       ),
+    );
+  }
+
+  ListTile getTaskItem(DocumentSnapshot document) {
+    return new ListTile(
+      title: new Text(document['title']),
+      leading: document['image'] == null ? null : new Image.network(document['image']),
     );
   }
 }
