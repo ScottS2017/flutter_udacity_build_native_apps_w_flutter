@@ -5,14 +5,30 @@ void main() {
   runApp(new TodoApp());
 }
 
+const double kAppBarHeight = 63.213;
+const double kAppBarExpandedHeight = 212.054;
+
+class TodoColors {
+  static const Color primaryDark = const Color(0xFF863352);
+  static const Color primary = const Color(0xFFB43F54);
+  static const Color primaryLight = const Color(0xFFCA4855);
+  static const Color background = const Color(0xFF1C1E27);
+  static const Color done = const Color(0xFF863352);
+  static const Color accent = const Color(0xFF863352);
+  static const Color disabled = const Color(0xFFBABCBE);
+  static const Color line = const Color(0xFF414044);
+}
+
 class TodoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
       title: 'Todo',
       theme: new ThemeData(
-        primaryColor: const Color(0xFFb43f54),
+        primaryColor: TodoColors.primary,
+        canvasColor: TodoColors.background,
         fontFamily: 'Raleway',
+        brightness: Brightness.dark,
       ),
       home: new TodoHome(),
     );
@@ -20,42 +36,97 @@ class TodoApp extends StatelessWidget {
 }
 
 class TodoHome extends StatelessWidget {
-  ListTile _getTaskItem(DocumentSnapshot document) {
-    return new ListTile(
-      title: new Text(document['title']),
-      leading: document['image'] == null ? null : new Image.network(document['image']),
+  Widget _getTaskItem(DocumentSnapshot document) {
+    return new Container(
+      color: TodoColors.background,
+      child: new ListTile(
+        title: new Text(document['title']),
+        leading: document['image'] == null
+            ? null
+            : new Image.network(document['image']),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
+      bottomNavigationBar: new Container(
+        height: 30.0,
+        decoration: new BoxDecoration(
+          gradient: new LinearGradient(
+            stops: <double>[0.0, 0.5, 1.0],
+            colors: <Color>[
+              TodoColors.primaryLight,
+              TodoColors.primary,
+              TodoColors.primaryDark,
+            ],
+          ),
+        ),
+        child: new Padding(
+          padding: new EdgeInsets.symmetric(horizontal: 10.0),
+          child: new Row(
+            children: <Widget>[
+              new Expanded(
+                child: new InkWell(
+                  child: new Text('show done'),
+                  onTap: () {
+                    // do something
+                  },
+                ),
+              ),
+              new InkWell(
+                onTap: () {
+                  // do something
+                },
+                child: new Text('+'),
+              ),
+            ],
+          ),
+        ),
+      ),
       body: new StreamBuilder(
-        stream: Firestore.instance
-            .collection('tasks')
-            .snapshots,
+        stream: Firestore.instance.collection('tasks').snapshots,
         builder: (context, snapshot) {
           if (!snapshot.hasData) return new Text('Loading...');
           return new CustomScrollView(
             slivers: [
               new SliverAppBar(
-                expandedHeight: 200.0,
-                flexibleSpace: new FlexibleSpaceBar(
-                  title: new Text('todo'),
-                  centerTitle: true,
-                  background: new Image.asset(
-                    'assets/notebook.jpg',
-                    color: Theme
-                        .of(context)
-                        .primaryColor,
-                    colorBlendMode: BlendMode.color,
-                    fit: BoxFit.cover,
+                pinned: true,
+                expandedHeight: kAppBarExpandedHeight,
+                flexibleSpace: new DecoratedBox(
+                  decoration: new BoxDecoration(
+                    gradient: new LinearGradient(
+                      stops: <double>[0.0, 0.5, 1.0],
+                      colors: <Color>[
+                        TodoColors.primaryDark,
+                        TodoColors.primary,
+                        TodoColors.primaryLight,
+                      ],
+                    ),
+                  ),
+                  child: new Stack(
+                    fit: StackFit.expand,
+                    children: <Widget>[
+                      new FlexibleSpaceBar(
+                        background: new Image.asset(
+                          'assets/notebook.jpg',
+                          color: Theme.of(context).primaryColor,
+                          colorBlendMode: BlendMode.color,
+                          fit: BoxFit.cover,
+                        ),
+                        title: new Text(
+                          'todo',
+                          style: new TextStyle(fontSize: 40.48),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
               new SliverList(
                 delegate: new SliverChildBuilderDelegate(
-                      (BuildContext context, int index) {
+                  (BuildContext context, int index) {
                     if (index >= snapshot.data.documents.length)
                       return null;
                     return _getTaskItem(snapshot.data.documents[index]);
