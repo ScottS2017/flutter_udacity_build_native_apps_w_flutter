@@ -127,8 +127,6 @@ class _TodoState extends State<TodoList> {
                   ),
                 ),
                 maxLines: null,
-                // TODO(maryx) this should be set to null pending bug fix in flutter
-                // https://github.com/flutter/flutter/issues/12046
                 keyboardType: TextInputType.multiline,
                 onChanged: (value) => _showSaveOptions(value),
               ),
@@ -265,8 +263,7 @@ class _TodoState extends State<TodoList> {
       data: new ThemeData(
         canvasColor: Colors.blueGrey[50],
       ),
-      child:
-      new Scaffold(
+      child: new Scaffold(
         body: _currentPage,
         bottomNavigationBar: new BottomNavigationBar(
           items: navBarItems,
