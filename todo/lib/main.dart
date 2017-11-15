@@ -12,7 +12,8 @@ class TodoApp extends StatelessWidget {
     return new MaterialApp(
       title: 'Todo',
       theme: new ThemeData(
-        primarySwatch: Colors.red,
+        primaryColor: const Color(0xFFb43f54),
+        fontFamily: 'Raleway',
       ),
       home: new TodoHome(),
     );
@@ -41,7 +42,7 @@ class TodoHome extends StatelessWidget {
                     color: Theme
                         .of(context)
                         .primaryColor,
-                    colorBlendMode: BlendMode.screen,
+                    colorBlendMode: BlendMode.color,
                     fit: BoxFit.cover,
                   ),
                 ),
