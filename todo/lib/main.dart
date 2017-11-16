@@ -112,7 +112,48 @@ class TodoHomeState extends State<TodoHome> {
               ),
               new InkWell(
                 onTap: () {
-                  // do something
+                  Navigator.push(context, new MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        final TextEditingController _controller = new TextEditingController();
+                        return new Scaffold(
+                          appBar: new AppBar(
+                            title: new Text('create todo'),
+                          ),
+                          body: new Column(
+                            children: <Widget>[
+                              new Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: <Widget>[
+                                  new Text('Task Title: '),
+                                  new Expanded(
+                                    child: new TextField(
+                                      controller: _controller,
+                                    )
+                                  )
+                                ],
+                              ),
+                              new Row(
+                                children: <Widget>[
+                                  new FlatButton(
+                                      onPressed: (){
+                                        if (_controller.text.trim().length > 0) {
+                                          Firestore.instance.collection('tasks')
+                                              .reference().document()
+                                              .setData({
+                                            "title": _controller.text,
+                                            "done": false
+                                          });
+                                          Navigator.pop(context);
+                                        }
+                                      },
+                                      child: new Text('Create Task'))
+                                ],
+                              )
+                            ],
+                          )
+                        );
+                      }
+                  ));
                 },
                 child: new Text('+'),
               ),
