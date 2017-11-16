@@ -102,7 +102,50 @@ class TodoHomeState extends State<TodoHome> {
               ),
               new InkWell(
                 onTap: () {
-                  // do something
+                  Navigator.push(context, new MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return new Scaffold(
+                          body: new CustomScrollView(
+                            slivers: [
+                              new SliverAppBar(
+                                pinned: true,
+                                automaticallyImplyLeading: true,
+                                expandedHeight: kAppBarExpandedHeight,
+                                flexibleSpace: new DecoratedBox(
+                                  decoration: new BoxDecoration(
+                                    gradient: new LinearGradient(
+                                      stops: <double>[0.0, 0.5, 1.0],
+                                      colors: <Color>[
+                                        TodoColors.primaryDark,
+                                        TodoColors.primary,
+                                        TodoColors.primaryLight,
+                                      ],
+                                    ),
+                                  ),
+                                  child: new Stack(
+                                    fit: StackFit.expand,
+                                    children: <Widget>[
+                                      new FlexibleSpaceBar(
+                                        background: new Image.asset(
+                                          'assets/notebook.jpg',
+                                          color: Theme.of(context).primaryColor,
+                                          colorBlendMode: BlendMode.color,
+                                          fit: BoxFit.cover,
+                                        ),
+                                        title: new Text(
+                                          'create todo',
+                                          style: new TextStyle(fontSize: 40.48),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                  ));
                 },
                 child: new Text('+'),
               ),
