@@ -126,11 +126,15 @@ class TodoHomeState extends State<TodoHome> {
                                 children: <Widget>[
                                   new FlatButton(
                                       onPressed: (){
-                                        Firestore.instance.collection('tasks').reference().document().setData({
-                                          "title": _controller.text,
-                                          "done": false
-                                        });
-                                        Navigator.pop(context);
+                                        if (_controller.text.trim().length > 0) {
+                                          Firestore.instance.collection('tasks')
+                                              .reference().document()
+                                              .setData({
+                                            "title": _controller.text,
+                                            "done": false
+                                          });
+                                          Navigator.pop(context);
+                                        }
                                       },
                                       child: new Text('Create Task'))
                                 ],
