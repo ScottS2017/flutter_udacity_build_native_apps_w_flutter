@@ -70,7 +70,13 @@ class TodoHomeState extends State<TodoHome> {
         ),
         leading: document['image'] == null
             ? null
-            : new Image.network(document['image']),
+            : new AspectRatio(
+                aspectRatio: 1.0,
+                child: new Image.network(
+                  document['image'],
+                  fit: BoxFit.cover,
+                ),
+              ),
       ),
     );
   }
