@@ -57,19 +57,54 @@ class TodoHomeState extends State<TodoHome> {
   Widget _getTaskItem(DocumentSnapshot document) {
     return new Container(
       color: TodoColors.background,
-      child: new ListTile(
-        title: new Text(
-          document['title'],
-          style: new TextStyle(
-            color: document['done'] ? TodoColors.done : null,
+      child: new Dismissible(
+        key: new ObjectKey(document),
+        background: dismissibleBackground(),
+        child: new ListTile(
+          title: new Text(
+            document['title'],
+            style: new TextStyle(
+              color: document['done'] ? TodoColors.done : null,
+            ),
           ),
+          leading: document['image'] == null
+              ? null
+              : new Image.network(document['image']),
         ),
-        leading: document['image'] == null
-            ? null
-            : new Image.network(document['image']),
       ),
     );
   }
+
+Widget dismissibleBackground() {
+  return new Container(
+    color: Colors.lightBlue,
+    child: new Row(
+      // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: <Widget>[
+        new Expanded(
+          child: new Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              new IconButton(
+                icon: new Icon(Icons.check),
+                onPressed: () => print('Check pressed'),
+              ),
+            ]
+          )
+        ),
+        new IconButton(
+          icon: new Icon(Icons.edit),
+          onPressed: () => print('email pressed'),
+        ),
+        new IconButton(
+          icon: new Icon(Icons.cancel),
+          onPressed: () => print('email pressed'),
+        ),
+      ]
+    ),
+  );
+}
 
   @override
   Widget build(BuildContext context) {

@@ -1,17 +1,23 @@
-// This is a basic Flutter widget test.
-// To perform an interaction with a widget in your test, use the WidgetTester utility that Flutter
-// provides. For example, you can send tap and scroll gestures. You can also use WidgetTester to
-// find child widgets in the widget tree, read text, and verify that the values of widget properties
-// are correct.
-
-import 'package:flutter/material.dart';
+// Unit & integration tests
 import 'package:flutter_test/flutter_test.dart';
 
 import '../lib/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    await tester.pumpWidget(new Todo());
-    expect(find.text('Clean the room'), findsOneWidget);
+
+  testWidgets('App launches to todo list page', (WidgetTester tester) async {
+    await tester.pumpWidget(new TodoApp());
+    expect(find.text('show done'), findsOneWidget);
+  });
+
+  testWidgets('Clicking on + goes to the create todo page', (WidgetTester tester) async {
+    await tester.pumpWidget(new TodoApp());
+    // Find the '+' widget
+    var plusWidget = find.text('+');
+    expect(plusWidget, findsOneWidget);
+    // Tap and test the create todo page is rendered
+    await tester.tap(plusWidget);
+    await tester.pumpAndSettle();
+    expect(find.text('create todo'), findsOneWidget);
   });
 }
