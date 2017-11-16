@@ -1,3 +1,4 @@
+import 'dart:ui' show lerpDouble;
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,6 +9,8 @@ void main() {
 
 const double kAppBarHeight = 63.213;
 const double kAppBarExpandedHeight = 212.054;
+const double kAppBarMinFontSize = 27.81;
+const double kAppBarMaxFontSize = 40.48;
 
 class TodoColors {
   static const Color primaryDark = const Color(0xFF863352);
@@ -23,7 +26,6 @@ class TodoColors {
 const TextStyle kDoneStyle = const TextStyle(
   color: TodoColors.done,
   decoration: TextDecoration.lineThrough,
-
 );
 
 class TodoApp extends StatelessWidget {
@@ -60,7 +62,7 @@ class TodoHomeState extends State<TodoHome> {
     return query.snapshots;
   }
 
-  Widget _getTaskItem(DocumentSnapshot document) {
+  Widget _buildTaskItem(DocumentSnapshot document) {
     return new Container(
       color: TodoColors.background,
       child: new ListTile(
@@ -77,6 +79,19 @@ class TodoHomeState extends State<TodoHome> {
                   fit: BoxFit.cover,
                 ),
               ),
+      ),
+    );
+  }
+
+  Widget _buildTitle(BuildContext context, BoxConstraints constraints) {
+    final double expansion = constraints.maxHeight - kAppBarHeight;
+    final double t = expansion / (kAppBarExpandedHeight - kAppBarHeight);
+    final double fontSize =
+        lerpDouble(kAppBarMinFontSize, kAppBarMaxFontSize, t);
+    return new Center(
+      child: new Text(
+        'todo',
+        style: new TextStyle(fontSize: fontSize),
       ),
     );
   }
@@ -112,9 +127,12 @@ class TodoHomeState extends State<TodoHome> {
               ),
               new InkWell(
                 onTap: () {
-                  Navigator.push(context, new MaterialPageRoute(
+                  Navigator.push(
+                    context,
+                    new MaterialPageRoute(
                       builder: (BuildContext context) {
-                        final TextEditingController _controller = new TextEditingController();
+                        final TextEditingController _controller =
+                            new TextEditingController();
                         return new Scaffold(
                           appBar: new AppBar(
                             title: new Text('create todo'),
@@ -126,34 +144,37 @@ class TodoHomeState extends State<TodoHome> {
                                 children: <Widget>[
                                   new Text('Task Title: '),
                                   new Expanded(
-                                    child: new TextField(
-                                      controller: _controller,
-                                    )
-                                  )
+                                      child: new TextField(
+                                    controller: _controller,
+                                  ))
                                 ],
                               ),
                               new Row(
                                 children: <Widget>[
                                   new FlatButton(
-                                      onPressed: (){
-                                        if (_controller.text.trim().length > 0) {
-                                          Firestore.instance.collection('tasks')
-                                              .reference().document()
-                                              .setData({
-                                            "title": _controller.text,
-                                            "done": false
-                                          });
-                                          Navigator.pop(context);
-                                        }
-                                      },
-                                      child: new Text('Create Task'))
+                                    onPressed: () {
+                                      if (_controller.text.trim().length > 0) {
+                                        Firestore.instance
+                                            .collection('tasks')
+                                            .reference()
+                                            .document()
+                                            .setData({
+                                          "title": _controller.text,
+                                          "done": false
+                                        });
+                                        Navigator.pop(context);
+                                      }
+                                    },
+                                    child: new Text('Create Task'),
+                                  ),
                                 ],
                               )
                             ],
-                          )
+                          ),
                         );
-                      }
-                  ));
+                      },
+                    ),
+                  );
                 },
                 child: new Text('+'),
               ),
@@ -183,18 +204,20 @@ class TodoHomeState extends State<TodoHome> {
                     ),
                   ),
                   child: new Stack(
-                    fit: StackFit.expand,
                     children: <Widget>[
                       new FlexibleSpaceBar(
                         background: new Image.asset(
                           'assets/notebook.jpg',
-                          color: Theme.of(context).primaryColor,
-                          colorBlendMode: BlendMode.color,
+                          color:
+                              Theme.of(context).primaryColor.withOpacity(0.75),
+                          colorBlendMode: BlendMode.overlay,
                           fit: BoxFit.cover,
                         ),
-                        title: new Text(
-                          'todo',
-                          style: new TextStyle(fontSize: 40.48),
+                      ),
+                      new Padding(
+                        padding: MediaQuery.of(context).padding,
+                        child: new LayoutBuilder(
+                          builder: _buildTitle,
                         ),
                       ),
                     ],
@@ -204,9 +227,8 @@ class TodoHomeState extends State<TodoHome> {
               new SliverList(
                 delegate: new SliverChildBuilderDelegate(
                   (BuildContext context, int index) {
-                    if (index >= snapshot.data.documents.length)
-                      return null;
-                    return _getTaskItem(snapshot.data.documents[index]);
+                    if (index >= snapshot.data.documents.length) return null;
+                    return _buildTaskItem(snapshot.data.documents[index]);
                   },
                 ),
               ),
