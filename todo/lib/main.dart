@@ -104,45 +104,39 @@ class TodoHomeState extends State<TodoHome> {
                 onTap: () {
                   Navigator.push(context, new MaterialPageRoute(
                       builder: (BuildContext context) {
+                        final TextEditingController _controller = new TextEditingController();
                         return new Scaffold(
-                          body: new CustomScrollView(
-                            slivers: [
-                              new SliverAppBar(
-                                pinned: true,
-                                automaticallyImplyLeading: true,
-                                expandedHeight: kAppBarExpandedHeight,
-                                flexibleSpace: new DecoratedBox(
-                                  decoration: new BoxDecoration(
-                                    gradient: new LinearGradient(
-                                      stops: <double>[0.0, 0.5, 1.0],
-                                      colors: <Color>[
-                                        TodoColors.primaryDark,
-                                        TodoColors.primary,
-                                        TodoColors.primaryLight,
-                                      ],
-                                    ),
-                                  ),
-                                  child: new Stack(
-                                    fit: StackFit.expand,
-                                    children: <Widget>[
-                                      new FlexibleSpaceBar(
-                                        background: new Image.asset(
-                                          'assets/notebook.jpg',
-                                          color: Theme.of(context).primaryColor,
-                                          colorBlendMode: BlendMode.color,
-                                          fit: BoxFit.cover,
-                                        ),
-                                        title: new Text(
-                                          'create todo',
-                                          style: new TextStyle(fontSize: 40.48),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
+                          appBar: new AppBar(
+                            title: new Text('create todo'),
                           ),
+                          body: new Column(
+                            children: <Widget>[
+                              new Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: <Widget>[
+                                  new Text('Task Title: '),
+                                  new Expanded(
+                                    child: new TextField(
+                                      controller: _controller,
+                                    )
+                                  )
+                                ],
+                              ),
+                              new Row(
+                                children: <Widget>[
+                                  new FlatButton(
+                                      onPressed: (){
+                                        Firestore.instance.collection('tasks').reference().document().setData({
+                                          "title": _controller.text,
+                                          "done": false
+                                        });
+                                        Navigator.pop(context);
+                                      },
+                                      child: new Text('Create Task'))
+                                ],
+                              )
+                            ],
+                          )
                         );
                       }
                   ));
