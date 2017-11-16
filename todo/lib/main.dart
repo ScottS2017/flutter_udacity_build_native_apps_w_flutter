@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'dart:io';
 
 void main() {
   runApp(new TodoApp());
@@ -87,44 +90,44 @@ class TodoHomeState extends State<TodoHome> {
     );
   }
 
-void handleDismissed(DismissDirection direction) {
-  if (direction == DismissDirection.startToEnd) {
-    print('Mark item as done');
+  void handleDismissed(DismissDirection direction) {
+    if (direction == DismissDirection.startToEnd) {
+      print('Mark item as done');
+    }
+    else if (direction == DismissDirection.endToStart) {
+      print('Mark item as canceled');
+    }
   }
-  else if (direction == DismissDirection.endToStart) {
-    print('Mark item as canceled');
-  }
-}
 
-Widget dismissibleRightSwipeBackground() {
-  return new Container(
-    color: Colors.lightGreen,
-    child: new Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: <Widget>[
-        new Padding(
-          padding: new EdgeInsets.only(left: 20.0),
-          child: new Icon(Icons.check),
-        ),
-      ]
-    ),
-  );
-}
-
-Widget dissmissibleLeftSwipeBackground() {
+  Widget dismissibleRightSwipeBackground() {
     return new Container(
-    color: Colors.red,
-    child: new Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: <Widget>[
-        new Padding(
-          padding: new EdgeInsets.only(right: 20.0),
-          child: new Icon(Icons.cancel),
-        ),
-      ]
-    ),
-  );
-}
+      color: Colors.lightGreen,
+      child: new Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          new Padding(
+            padding: new EdgeInsets.only(left: 20.0),
+            child: new Icon(Icons.check),
+          ),
+        ]
+      ),
+    );
+  }
+
+  Widget dissmissibleLeftSwipeBackground() {
+    return new Container(
+      color: Colors.red,
+      child: new Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            new Padding(
+              padding: new EdgeInsets.only(right: 20.0),
+              child: new Icon(Icons.cancel),
+            ),
+          ]
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -159,44 +162,7 @@ Widget dissmissibleLeftSwipeBackground() {
                 onTap: () {
                   Navigator.push(context, new MaterialPageRoute(
                       builder: (BuildContext context) {
-                        final TextEditingController _controller = new TextEditingController();
-                        return new Scaffold(
-                          appBar: new AppBar(
-                            title: new Text('create todo'),
-                          ),
-                          body: new Column(
-                            children: <Widget>[
-                              new Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: <Widget>[
-                                  new Text('Task Title: '),
-                                  new Expanded(
-                                    child: new TextField(
-                                      controller: _controller,
-                                    )
-                                  )
-                                ],
-                              ),
-                              new Row(
-                                children: <Widget>[
-                                  new FlatButton(
-                                      onPressed: (){
-                                        if (_controller.text.trim().length > 0) {
-                                          Firestore.instance.collection('tasks')
-                                              .reference().document()
-                                              .setData({
-                                            "title": _controller.text,
-                                            "done": false
-                                          });
-                                          Navigator.pop(context);
-                                        }
-                                      },
-                                      child: new Text('Create Task'))
-                                ],
-                              )
-                            ],
-                          )
-                        );
+                        return new TodoCreate();
                       }
                   ));
                 },
@@ -261,4 +227,88 @@ Widget dissmissibleLeftSwipeBackground() {
       ),
     );
   }
+}
+
+class TodoCreate extends StatefulWidget {
+  @override
+  TodoCreateState createState() => new TodoCreateState();
+}
+
+class TodoCreateState extends State<TodoCreate> {
+
+  final TextEditingController _controller = new TextEditingController();
+  String _taskImage;
+
+  @override
+  Widget build(BuildContext context) {
+
+    return new Scaffold(
+        appBar: new AppBar(
+          title: new Text('create todo'),
+        ),
+        body: new Column(
+          children: <Widget>[
+            new Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                new Text('Task Title: '),
+                new Expanded(
+                    child: new TextField(
+                      controller: _controller,
+                    )
+                )
+              ],
+            ),
+            new Row(
+              children: <Widget>[
+                new FlatButton(
+                    onPressed: () async {
+                      var _file = await ImagePicker.pickImage();
+                      print(_file.path);
+                      _taskImage = _file.path;
+                    },
+                    child: new Text('choose image')
+                )
+              ],
+            ),
+            new Row(
+              children: <Widget>[
+                new FlatButton(
+                    onPressed: () async {
+                      if (_controller.text.trim().length > 0) {
+                        if (_taskImage != null) {
+                          File taskImageFile = await new File(_taskImage);
+                          final StorageReference storageRef = FirebaseStorage
+                              .instance.ref().child(new DateTime.now()
+                                  .millisecondsSinceEpoch.toString())
+                              .child(_taskImage.split('/').last);
+                          UploadTaskSnapshot uploadTaskSnapshot = await storageRef.put(taskImageFile).future;
+                          Firestore.instance.collection(
+                              'tasks')
+                              .reference().document()
+                              .setData({
+                            "title": _controller.text,
+                            "done": false,
+                            "image": uploadTaskSnapshot.downloadUrl.toString()
+                          });
+                        } else {
+                          Firestore.instance.collection(
+                              'tasks')
+                              .reference().document()
+                              .setData({
+                            "title": _controller.text,
+                            "done": false
+                          });
+                        }
+                        Navigator.pop(context);
+                      }
+                    },
+                    child: new Text('Create Task'))
+              ],
+            )
+          ],
+        )
+    );
+  }
+
 }
