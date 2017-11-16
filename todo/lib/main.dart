@@ -14,11 +14,17 @@ class TodoColors {
   static const Color primary = const Color(0xFFB43F54);
   static const Color primaryLight = const Color(0xFFCA4855);
   static const Color background = const Color(0xFF1C1E27);
-  static const Color done = const Color(0xFF863352);
+  static const Color done = const Color(0xFFBABCBE);
   static const Color accent = const Color(0xFF863352);
   static const Color disabled = const Color(0xFFBABCBE);
   static const Color line = const Color(0xFF414044);
 }
+
+const TextStyle kDoneStyle = const TextStyle(
+  color: TodoColors.done,
+  decoration: TextDecoration.lineThrough,
+
+);
 
 class TodoApp extends StatelessWidget {
   @override
@@ -61,15 +67,19 @@ class TodoHomeState extends State<TodoHome> {
         key: new ObjectKey(document),
         background: dismissibleBackground(),
         child: new ListTile(
-          title: new Text(
-            document['title'],
-            style: new TextStyle(
-              color: document['done'] ? TodoColors.done : null,
-            ),
-          ),
-          leading: document['image'] == null
-              ? null
-              : new Image.network(document['image']),
+        title: new Text(
+          document['title'],
+          style: document['done'] ? kDoneStyle : null,
+        ),
+        leading: document['image'] == null
+            ? null
+            : new AspectRatio(
+                aspectRatio: 1.0,
+                child: new Image.network(
+                  document['image'],
+                  fit: BoxFit.cover,
+                ),
+              ),
         ),
       ),
     );
