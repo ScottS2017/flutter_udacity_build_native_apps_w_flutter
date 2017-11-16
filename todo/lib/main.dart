@@ -65,7 +65,9 @@ class TodoHomeState extends State<TodoHome> {
       color: TodoColors.background,
       child: new Dismissible(
         key: new ObjectKey(document),
-        background: dismissibleBackground(),
+        background: dismissibleRightSwipeBackground(),
+        secondaryBackground: dissmissibleLeftSwipeBackground(),
+        onDismissed: handleDismissed,
         child: new ListTile(
         title: new Text(
           document['title'],
@@ -85,31 +87,39 @@ class TodoHomeState extends State<TodoHome> {
     );
   }
 
-Widget dismissibleBackground() {
+void handleDismissed(DismissDirection direction) {
+  if (direction == DismissDirection.startToEnd) {
+    print('Mark item as done');
+  }
+  else if (direction == DismissDirection.endToStart) {
+    print('Mark item as canceled');
+  }
+}
+
+Widget dismissibleRightSwipeBackground() {
   return new Container(
-    color: Colors.lightBlue,
+    color: Colors.lightGreen,
     child: new Row(
-      // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
-        new Expanded(
-          child: new Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              new IconButton(
-                icon: new Icon(Icons.check),
-                onPressed: () => print('Check pressed'),
-              ),
-            ]
-          )
+        new Padding(
+          padding: new EdgeInsets.only(left: 20.0),
+          child: new Icon(Icons.check),
         ),
-        new IconButton(
-          icon: new Icon(Icons.edit),
-          onPressed: () => print('email pressed'),
-        ),
-        new IconButton(
-          icon: new Icon(Icons.cancel),
-          onPressed: () => print('email pressed'),
+      ]
+    ),
+  );
+}
+
+Widget dissmissibleLeftSwipeBackground() {
+    return new Container(
+    color: Colors.red,
+    child: new Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: <Widget>[
+        new Padding(
+          padding: new EdgeInsets.only(right: 20.0),
+          child: new Icon(Icons.cancel),
         ),
       ]
     ),
