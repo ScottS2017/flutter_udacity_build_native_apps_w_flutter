@@ -124,7 +124,7 @@ class TodoHomeState extends State<TodoHome> {
           children: <Widget>[
             new Padding(
               padding: new EdgeInsets.only(right: 20.0),
-              child: new Icon(Icons.cancel),
+              child: new Icon(Icons.delete),
             ),
           ]
       ),
