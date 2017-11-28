@@ -8,12 +8,14 @@ import 'package:flutter/material.dart';
 import 'unit.dart';
 import 'converter_route.dart';
 
+/// A Category for a list of units.
 class Category extends StatelessWidget {
   final String name;
   final List<Unit> units;
   final ColorSwatch color;
   final IconData icon;
 
+  /// Constructor
   Category({
     this.name,
     this.units,
@@ -21,6 +23,7 @@ class Category extends StatelessWidget {
     this.icon,
   });
 
+  /// Navigates to the unit converter page
   void _navigateToConverter(BuildContext context) {
     if (Navigator.of(context).canPop()) {
       Navigator.of(context).pop();
@@ -28,7 +31,11 @@ class Category extends StatelessWidget {
     Navigator.of(context).push(new MaterialPageRoute<Null>(
       builder: (BuildContext context) {
         return new Scaffold(
-          body: new ConverterRoute(units: units, color: color, name: name),
+          body: new ConverterRoute(
+            name: name,
+            units: units,
+            color: color,
+          ),
           // This prevents the onscreen keyboard from affecting the size of the
           // screen, and the space given to widgets.
           // See https://docs.flutter.io/flutter/material/Scaffold/resizeToAvoidBottomPadding.html
@@ -38,7 +45,7 @@ class Category extends StatelessWidget {
     ));
   }
 
-  // Builds a tile that shows unit category information
+  /// Builds a tile that shows unit [Category] information
   @override
   Widget build(BuildContext context) {
     return new Container(
@@ -62,7 +69,6 @@ class Category extends StatelessWidget {
                   color: Colors.black,
                   fontSize: 30.0,
                   fontWeight: FontWeight.w700,
-                  fontFamily: 'Noto Sans',
                 ),
               ),
             ],
