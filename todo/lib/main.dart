@@ -10,11 +10,15 @@ void main() {
   runApp(new TodoApp());
 }
 
-const double kTodoLineHeight = 63.0;
-const double kAppBarHeight = 63.213;
-const double kAppBarExpandedHeight = 212.054;
-const double kAppBarMinFontSize = 27.81;
-const double kAppBarMaxFontSize = 40.48;
+const todoLineHeight = 63.0;
+const appBarHeight = 63.213;
+const appBarExpandedHeight = 212.054;
+const appBarMinFontSize = 27.81;
+const appBarMaxFontSize = 40.48;
+const doneStyle = const TextStyle(
+  color: TodoColors.done,
+  decoration: TextDecoration.lineThrough,
+);
 
 class TodoColors {
   static const Color primaryDark = const Color(0xFF863352);
@@ -26,11 +30,6 @@ class TodoColors {
   static const Color disabled = const Color(0xFFBABCBE);
   static const Color line = const Color(0xFF414044);
 }
-
-const TextStyle kDoneStyle = const TextStyle(
-  color: TodoColors.done,
-  decoration: TextDecoration.lineThrough,
-);
 
 class TodoApp extends StatelessWidget {
   @override
@@ -56,19 +55,9 @@ class TodoHome extends StatefulWidget {
 class TodoHomeState extends State<TodoHome> {
   bool _showDone = false;
 
-  Stream<QuerySnapshot> get snapshots {
-    Query query = Firestore.instance.collection('tasks');
-    if (_showDone) {
-      query = query.where('done', isEqualTo: true);
-    } else {
-      query = query.where('done', isEqualTo: false);
-    }
-    return query.snapshots;
-  }
-
   Widget _buildTaskItem(DocumentSnapshot document) {
     return new Container(
-      height: kTodoLineHeight,
+      height: todoLineHeight,
       decoration: const BoxDecoration(
         color: TodoColors.background,
         border: const Border(
@@ -94,7 +83,7 @@ class TodoHomeState extends State<TodoHome> {
         },
         child: new InkWell(
           onTap: () async {
-            Map<String, dynamic> result = await Navigator.push(context,
+            var result = await Navigator.push(context,
                 new MaterialPageRoute(builder: (BuildContext context) {
               return new TodoEdit(document);
             }));
@@ -103,18 +92,18 @@ class TodoHomeState extends State<TodoHome> {
             }
           },
           child: new Row(
-            children: <Widget>[
+            children: [
               new Expanded(
                 child: new ListTile(
                   title: new Text(
                     '${document['title']}',
-                    style: document['done'] ? kDoneStyle : null,
+                    style: document['done'] ? doneStyle : null,
                   ),
                 ),
               ),
               new Container(
-                height: kTodoLineHeight,
-                width: kTodoLineHeight,
+                height: todoLineHeight,
+                width: todoLineHeight,
                 child: document['image'] == null
                     ? null
                     : new Image.network(
@@ -134,7 +123,7 @@ class TodoHomeState extends State<TodoHome> {
       color: Colors.lightGreen,
       child: new Row(
           mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
+          children: [
             new Padding(
               padding: new EdgeInsets.only(left: 20.0),
               child: new Icon(Icons.check),
@@ -147,7 +136,7 @@ class TodoHomeState extends State<TodoHome> {
     return new Container(
       color: Colors.red,
       child:
-          new Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
+          new Row(mainAxisAlignment: MainAxisAlignment.end, children: [
         new Padding(
           padding: new EdgeInsets.only(right: 20.0),
           child: new Icon(Icons.delete),
@@ -157,10 +146,10 @@ class TodoHomeState extends State<TodoHome> {
   }
 
   Widget _buildTitle(BuildContext context, BoxConstraints constraints) {
-    final double expansion = constraints.maxHeight - kAppBarHeight;
-    final double t = expansion / (kAppBarExpandedHeight - kAppBarHeight);
-    final double fontSize =
-        lerpDouble(kAppBarMinFontSize, kAppBarMaxFontSize, t);
+    var expansion = constraints.maxHeight - appBarHeight;
+    var t = expansion / (appBarExpandedHeight - appBarHeight);
+    var fontSize =
+        lerpDouble(appBarMinFontSize, appBarMaxFontSize, t);
     return new Center(
       child: new Text(
         'todo',
@@ -171,14 +160,16 @@ class TodoHomeState extends State<TodoHome> {
 
   @override
   Widget build(BuildContext context) {
+    var query = Firestore.instance.collection('tasks')
+      .where('done', isEqualTo: _showDone);
     return new Scaffold(
       bottomNavigationBar: new Container(
         height: 54.287,
         padding: new EdgeInsets.symmetric(horizontal: 20.0),
         decoration: new BoxDecoration(
           gradient: new LinearGradient(
-            stops: <double>[0.0, 0.5, 1.0],
-            colors: <Color>[
+            stops: [0.0, 0.5, 1.0],
+            colors: [
               TodoColors.primaryLight,
               TodoColors.primary,
               TodoColors.primaryDark,
@@ -186,7 +177,7 @@ class TodoHomeState extends State<TodoHome> {
           ),
         ),
         child: new Row(
-          children: <Widget>[
+          children: [
             new Expanded(
               child: new InkWell(
                 child: new Text(_showDone ? 'show active' : 'show done'),
@@ -199,7 +190,7 @@ class TodoHomeState extends State<TodoHome> {
             ),
             new InkWell(
               onTap: () async {
-                Map<String, dynamic> result = await Navigator.push(context,
+                var result = await Navigator.push(context,
                     new MaterialPageRoute(builder: (BuildContext context) {
                   return new TodoEdit();
                 }));
@@ -222,9 +213,11 @@ class TodoHomeState extends State<TodoHome> {
         ),
       ),
       body: new StreamBuilder(
-        stream: snapshots,
+        stream: query.snapshots,
         builder: (context, snapshot) {
-          if (!snapshot.hasData) return new Text('Loading...');
+          if (!snapshot.hasData) {
+            return new Container();
+          }
           return new CustomScrollView(
             slivers: [
               new SliverAppBar(
@@ -232,13 +225,13 @@ class TodoHomeState extends State<TodoHome> {
                 automaticallyImplyLeading: false,
                 expandedHeight:
                     MediaQuery.of(context).orientation == Orientation.portrait
-                        ? kAppBarExpandedHeight
-                        : kAppBarHeight,
+                        ? appBarExpandedHeight
+                        : appBarHeight,
                 flexibleSpace: new DecoratedBox(
                   decoration: new BoxDecoration(
                     gradient: new LinearGradient(
-                      stops: <double>[0.0, 0.5, 1.0],
-                      colors: <Color>[
+                      stops: [0.0, 0.5, 1.0],
+                      colors: [
                         TodoColors.primaryDark,
                         TodoColors.primary,
                         TodoColors.primaryLight,
@@ -246,7 +239,7 @@ class TodoHomeState extends State<TodoHome> {
                     ),
                   ),
                   child: new Stack(
-                    children: <Widget>[
+                    children: [
                       new FlexibleSpaceBar(
                         background: new Image.asset(
                           'assets/notebook.jpg',
@@ -287,7 +280,7 @@ class TodoEdit extends StatefulWidget {
 
   /// If we are editing, the DocumentSnapshot we are editing.
   ///
-  /// `null` for a new todo
+  /// `null` for a new item.
   final DocumentSnapshot document;
 
   @override
@@ -313,7 +306,7 @@ class TodoEditState extends State<TodoEdit> {
       body: new Padding(
         padding: const EdgeInsets.all(10.0),
         child: new Column(
-          children: <Widget>[
+          children: [
             new Expanded(
               child: new TextField(
                 controller: _controller,
@@ -324,7 +317,7 @@ class TodoEditState extends State<TodoEdit> {
             ),
             new Row(
               mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
+              children: [
                 new FlatButton(
                   color: TodoColors.accent,
                   onPressed: () async {
