@@ -332,7 +332,7 @@ class TodoEditState extends State<TodoEdit> {
                     print(_file.path);
                     _taskImage = _file.path;
                   },
-                  child: new Icon(Icons.photo),
+                  child: new Icon(Icons.photo_camera),
                 ),
                 new Container(width: 5.0),
                 new FlatButton(
