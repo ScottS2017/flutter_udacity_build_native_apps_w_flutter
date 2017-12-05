@@ -4,7 +4,7 @@ description: To-Do list
 dependencies:
   flutter:
     sdk: flutter
-  cloud_firestore: '^0.0.3'
+  cloud_firestore: '^0.1.1'
   firebase_storage: '^0.0.7'
   image_picker: '^0.1.3'
 
