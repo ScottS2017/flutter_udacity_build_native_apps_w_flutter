@@ -22,7 +22,7 @@ class TodoColors {
   static const Color primaryLight = const Color(0xFFCA4855);
   static const Color background = const Color(0xFF1C1E27);
   static const Color done = const Color(0xFFBABCBE);
-  static const Color accent = const Color(0xFF863352);
+  static const Color accent = const Color(0xFF42B2CC);
   static const Color disabled = const Color(0xFFBABCBE);
   static const Color line = const Color(0xFF414044);
 }
@@ -68,10 +68,15 @@ class TodoHomeState extends State<TodoHome> {
 
   Widget _buildTaskItem(DocumentSnapshot document) {
     return new Container(
-      color: TodoColors.background,
       height: kTodoLineHeight,
       decoration: const BoxDecoration(
-        border: const Border(bottom: const BorderSide(color: TodoColors.disabled)),
+        color: TodoColors.background,
+        border: const Border(
+          bottom: const BorderSide(
+            color: TodoColors.disabled,
+            width: 0.5,
+          ),
+        ),
       ),
       child: new Dismissible(
         key: new ValueKey(document.documentID),
@@ -82,32 +87,47 @@ class TodoHomeState extends State<TodoHome> {
         secondaryBackground: _buildSecondaryBackground(),
         onDismissed: (direction) {
           if (direction == DismissDirection.startToEnd) {
-            document.reference.setData({'done': true}, SetOptions.merge);
+            document.reference.updateData({'done': true});
           } else if (direction == DismissDirection.endToStart) {
             document.reference.delete();
           }
         },
-        child: new Row(
-          children: <Widget>[
-            new Expanded(
-              child: new ListTile(
-                title: new Text(
-                  '${document['title']}',
-                  style: document['done'] ? kDoneStyle : null,
+        child: new InkWell(
+          onTap: () async {
+            Map<String, dynamic> result = await Navigator.push(context,
+                new MaterialPageRoute(builder: (BuildContext context) {
+              return new TodoEdit(document);
+            }));
+            if (result != null) {
+              Firestore.instance
+                  .collection('tasks')
+                  .reference()
+                  .document()
+                  .setData(result, SetOptions.merge);
+            }
+          },
+          child: new Row(
+            children: <Widget>[
+              new Expanded(
+                child: new ListTile(
+                  title: new Text(
+                    '${document['title']}',
+                    style: document['done'] ? kDoneStyle : null,
+                  ),
                 ),
               ),
-            ),
-            new Container(
-              height: kTodoLineHeight,
-              width: kTodoLineHeight,
-              child: document['image'] == null
-                  ? null
-                  : new Image.network(
-                      document['image'],
-                      fit: BoxFit.cover,
-                    ),
-            ),
-          ],
+              new Container(
+                height: kTodoLineHeight,
+                width: kTodoLineHeight,
+                child: document['image'] == null
+                    ? null
+                    : new Image.network(
+                        document['image'],
+                        fit: BoxFit.cover,
+                      ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -157,7 +177,8 @@ class TodoHomeState extends State<TodoHome> {
   Widget build(BuildContext context) {
     return new Scaffold(
       bottomNavigationBar: new Container(
-        height: 30.0,
+        height: 54.287,
+        padding: new EdgeInsets.symmetric(horizontal: 20.0),
         decoration: new BoxDecoration(
           gradient: new LinearGradient(
             stops: <double>[0.0, 0.5, 1.0],
@@ -168,36 +189,40 @@ class TodoHomeState extends State<TodoHome> {
             ],
           ),
         ),
-        child: new Padding(
-          padding: new EdgeInsets.symmetric(horizontal: 10.0),
-          child: new Row(
-            children: <Widget>[
-              new Expanded(
-                child: new InkWell(
-                  child: new Text(_showDone ? 'show active' : 'show done'),
-                  onTap: () {
-                    setState(() {
-                      _showDone = !_showDone;
-                    });
-                  },
-                ),
-              ),
-              new InkWell(
-                onTap: () async {
-                  await Navigator.push(context,
-                      new MaterialPageRoute(builder: (BuildContext context) {
-                    return new TodoCreate();
-                  }));
-                  if (mounted) {
-                    setState(() {
-                      _showDone = false;
-                    });
-                  }
+        child: new Row(
+          children: <Widget>[
+            new Expanded(
+              child: new InkWell(
+                child: new Text(_showDone ? 'show active' : 'show done'),
+                onTap: () {
+                  setState(() {
+                    _showDone = !_showDone;
+                  });
                 },
-                child: new Text('+'),
               ),
-            ],
-          ),
+            ),
+            new InkWell(
+              onTap: () async {
+                Map<String, dynamic> result = await Navigator.push(context,
+                    new MaterialPageRoute(builder: (BuildContext context) {
+                  return new TodoEdit();
+                }));
+                if (result != null) {
+                  Firestore.instance
+                      .collection('tasks')
+                      .reference()
+                      .document()
+                      .setData(result);
+                }
+                if (mounted) {
+                  setState(() {
+                    _showDone = false;
+                  });
+                }
+              },
+              child: new Text('+', style: const TextStyle(fontSize: 38.0)),
+            ),
+          ],
         ),
       ),
       body: new StreamBuilder(
@@ -258,84 +283,89 @@ class TodoHomeState extends State<TodoHome> {
   }
 }
 
-class TodoCreate extends StatefulWidget {
+class TodoEdit extends StatefulWidget {
+  TodoEdit([this.document]);
+
+  /// If we are editing, the DocumentSnapshot we are editing.
+  ///
+  /// `null` for a new todo
+  final DocumentSnapshot document;
+
   @override
-  TodoCreateState createState() => new TodoCreateState();
+  TodoEditState createState() => new TodoEditState();
 }
 
-class TodoCreateState extends State<TodoCreate> {
-  final TextEditingController _controller = new TextEditingController();
+class TodoEditState extends State<TodoEdit> {
+  TextEditingController _controller;
   String _taskImage;
+
+  @override
+  void initState() {
+    _controller = new TextEditingController(text: widget.document['title']);
+  }
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-        appBar: new AppBar(
-          title: new Text('create todo'),
-        ),
-        body: new Column(
+      appBar: new AppBar(
+        title: new Text('todo'),
+      ),
+      body: new Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: new Column(
           children: <Widget>[
-            new Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                new Text('Task Title: '),
-                new Expanded(
-                    child: new TextField(
-                  controller: _controller,
-                ))
-              ],
+            new Expanded(
+              child: new TextField(
+                controller: _controller,
+                decoration: new InputDecoration(
+                  hintText: 'Type something...',
+                ),
+              ),
             ),
             new Row(
+              mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
                 new FlatButton(
-                    onPressed: () async {
-                      var _file = await ImagePicker.pickImage();
-                      print(_file.path);
-                      _taskImage = _file.path;
-                    },
-                    child: new Text('choose image'))
-              ],
-            ),
-            new Row(
-              children: <Widget>[
+                  color: TodoColors.accent,
+                  onPressed: () async {
+                    var _file = await ImagePicker.pickImage();
+                    print(_file.path);
+                    _taskImage = _file.path;
+                  },
+                  child: new Icon(Icons.photo),
+                ),
+                new Container(width: 5.0),
                 new FlatButton(
-                    onPressed: () async {
-                      if (_controller.text.trim().length > 0) {
-                        if (_taskImage != null) {
-                          File taskImageFile = await new File(_taskImage);
-                          final StorageReference storageRef = FirebaseStorage
-                              .instance
-                              .ref()
-                              .child(new DateTime.now()
-                                  .millisecondsSinceEpoch
-                                  .toString())
-                              .child(_taskImage.split('/').last);
-                          UploadTaskSnapshot uploadTaskSnapshot =
-                              await storageRef.put(taskImageFile).future;
-                          Firestore.instance
-                              .collection('tasks')
-                              .reference()
-                              .document()
-                              .setData({
-                            "title": _controller.text,
-                            "done": false,
-                            "image": uploadTaskSnapshot.downloadUrl.toString()
-                          });
-                        } else {
-                          Firestore.instance
-                              .collection('tasks')
-                              .reference()
-                              .document()
-                              .setData(
-                                  {"title": _controller.text, "done": false});
-                        }
-                        Navigator.pop(context);
+                  color: TodoColors.accent,
+                  onPressed: () async {
+                    Map<String, dynamic> result = {
+                      'title': _controller.text,
+                      'done': false,
+                    };
+                    if (_controller.text.trim().length > 0) {
+                      if (_taskImage != null) {
+                        File taskImageFile = await new File(_taskImage);
+                        final StorageReference storageRef = FirebaseStorage
+                            .instance
+                            .ref()
+                            .child(new DateTime.now()
+                            .millisecondsSinceEpoch
+                            .toString())
+                            .child(_taskImage.split('/').last);
+                        UploadTaskSnapshot uploadTaskSnapshot =
+                        await storageRef.put(taskImageFile).future;
+                        result['image'] = uploadTaskSnapshot.downloadUrl.toString();
                       }
-                    },
-                    child: new Text('Create Task'))
+                      Navigator.pop(context, result);
+                    }
+                  },
+                  child: new Text('done'),
+                ),
               ],
             )
           ],
-        ));
+        ),
+      ),
+    );
   }
 }
