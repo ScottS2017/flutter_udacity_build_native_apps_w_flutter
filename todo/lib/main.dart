@@ -99,11 +99,7 @@ class TodoHomeState extends State<TodoHome> {
               return new TodoEdit(document);
             }));
             if (result != null) {
-              Firestore.instance
-                  .collection('tasks')
-                  .reference()
-                  .document()
-                  .setData(result, SetOptions.merge);
+              document.reference.setData(result, SetOptions.merge);
             }
           },
           child: new Row(
@@ -301,7 +297,8 @@ class TodoEditState extends State<TodoEdit> {
 
   @override
   void initState() {
-    _controller = new TextEditingController(text: widget.document['title']);
+    String text = widget.document == null ? null : widget.document['title'];
+    _controller = new TextEditingController(text: text);
   }
 
   @override
@@ -340,8 +337,10 @@ class TodoEditState extends State<TodoEdit> {
                   onPressed: () async {
                     Map<String, dynamic> result = {
                       'title': _controller.text,
-                      'done': false,
                     };
+                    if (widget.document == null) {
+                      result['done'] = false;
+                    }
                     if (_controller.text.trim().length > 0) {
                       if (_taskImage != null) {
                         File taskImageFile = await new File(_taskImage);
