@@ -10,6 +10,7 @@ void main() {
   runApp(new TodoApp());
 }
 
+const double kTodoLineHeight = 63.0;
 const double kAppBarHeight = 63.213;
 const double kAppBarExpandedHeight = 212.054;
 const double kAppBarMinFontSize = 27.81;
@@ -68,6 +69,10 @@ class TodoHomeState extends State<TodoHome> {
   Widget _buildTaskItem(DocumentSnapshot document) {
     return new Container(
       color: TodoColors.background,
+      height: kTodoLineHeight,
+      decoration: const BoxDecoration(
+        border: const Border(bottom: const BorderSide(color: TodoColors.disabled)),
+      ),
       child: new Dismissible(
         key: new ValueKey(document.documentID),
         direction: document['done']
@@ -93,8 +98,8 @@ class TodoHomeState extends State<TodoHome> {
               ),
             ),
             new Container(
-              height: 50.0,
-              width: 50.0,
+              height: kTodoLineHeight,
+              width: kTodoLineHeight,
               child: document['image'] == null
                   ? null
                   : new Image.network(
