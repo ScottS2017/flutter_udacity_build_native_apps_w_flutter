@@ -230,7 +230,10 @@ class TodoHomeState extends State<TodoHome> {
               new SliverAppBar(
                 pinned: true,
                 automaticallyImplyLeading: false,
-                expandedHeight: kAppBarExpandedHeight,
+                expandedHeight:
+                    MediaQuery.of(context).orientation == Orientation.portrait
+                        ? kAppBarExpandedHeight
+                        : kAppBarHeight,
                 flexibleSpace: new DecoratedBox(
                   decoration: new BoxDecoration(
                     gradient: new LinearGradient(
@@ -348,12 +351,13 @@ class TodoEditState extends State<TodoEdit> {
                             .instance
                             .ref()
                             .child(new DateTime.now()
-                            .millisecondsSinceEpoch
-                            .toString())
+                                .millisecondsSinceEpoch
+                                .toString())
                             .child(_taskImage.split('/').last);
                         UploadTaskSnapshot uploadTaskSnapshot =
-                        await storageRef.put(taskImageFile).future;
-                        result['image'] = uploadTaskSnapshot.downloadUrl.toString();
+                            await storageRef.put(taskImageFile).future;
+                        result['image'] =
+                            uploadTaskSnapshot.downloadUrl.toString();
                       }
                       Navigator.pop(context, result);
                     }
