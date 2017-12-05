@@ -69,65 +69,69 @@ class TodoHomeState extends State<TodoHome> {
     return new Container(
       color: TodoColors.background,
       child: new Dismissible(
-        key: new ObjectKey(document),
-        background: dismissibleRightSwipeBackground(),
-        secondaryBackground: dissmissibleLeftSwipeBackground(),
-        onDismissed: handleDismissed,
-        child: new ListTile(
-        title: new Text(
-          document['title'],
-          style: document['done'] ? kDoneStyle : null,
-        ),
-        leading: document['image'] == null
-            ? null
-            : new AspectRatio(
-                aspectRatio: 1.0,
-                child: new Image.network(
-                  document['image'],
-                  fit: BoxFit.cover,
+        key: new ValueKey(document.documentID),
+        direction: document['done']
+            ? DismissDirection.endToStart
+            : DismissDirection.horizontal,
+        background: _buildBackground(),
+        secondaryBackground: _buildSecondaryBackground(),
+        onDismissed: (direction) {
+          if (direction == DismissDirection.startToEnd) {
+            document.reference.setData({'done': true}, SetOptions.merge);
+          } else if (direction == DismissDirection.endToStart) {
+            document.reference.delete();
+          }
+        },
+        child: new Row(
+          children: <Widget>[
+            new Expanded(
+              child: new ListTile(
+                title: new Text(
+                  '${document['title']}',
+                  style: document['done'] ? kDoneStyle : null,
                 ),
               ),
+            ),
+            new Container(
+              height: 50.0,
+              width: 50.0,
+              child: document['image'] == null
+                  ? null
+                  : new Image.network(
+                      document['image'],
+                      fit: BoxFit.cover,
+                    ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  void handleDismissed(DismissDirection direction) {
-    if (direction == DismissDirection.startToEnd) {
-      print('Mark item as done');
-    }
-    else if (direction == DismissDirection.endToStart) {
-      print('Mark item as canceled');
-    }
-  }
-
-  Widget dismissibleRightSwipeBackground() {
+  Widget _buildBackground() {
     return new Container(
       color: Colors.lightGreen,
       child: new Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          new Padding(
-            padding: new EdgeInsets.only(left: 20.0),
-            child: new Icon(Icons.check),
-          ),
-        ]
-      ),
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            new Padding(
+              padding: new EdgeInsets.only(left: 20.0),
+              child: new Icon(Icons.check),
+            ),
+          ]),
     );
   }
 
-  Widget dissmissibleLeftSwipeBackground() {
+  Widget _buildSecondaryBackground() {
     return new Container(
       color: Colors.red,
-      child: new Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            new Padding(
-              padding: new EdgeInsets.only(right: 20.0),
-              child: new Icon(Icons.delete),
-            ),
-          ]
-      ),
+      child:
+          new Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
+        new Padding(
+          padding: new EdgeInsets.only(right: 20.0),
+          child: new Icon(Icons.delete),
+        ),
+      ]),
     );
   }
 
@@ -174,14 +178,16 @@ class TodoHomeState extends State<TodoHome> {
                 ),
               ),
               new InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    new MaterialPageRoute(
-                      builder: (BuildContext context) {
-                        return new TodoCreate();
-                      }
-                  ));
+                onTap: () async {
+                  await Navigator.push(context,
+                      new MaterialPageRoute(builder: (BuildContext context) {
+                    return new TodoCreate();
+                  }));
+                  if (mounted) {
+                    setState(() {
+                      _showDone = false;
+                    });
+                  }
                 },
                 child: new Text('+'),
               ),
@@ -253,13 +259,11 @@ class TodoCreate extends StatefulWidget {
 }
 
 class TodoCreateState extends State<TodoCreate> {
-
   final TextEditingController _controller = new TextEditingController();
   String _taskImage;
 
   @override
   Widget build(BuildContext context) {
-
     return new Scaffold(
         appBar: new AppBar(
           title: new Text('create todo'),
@@ -272,9 +276,8 @@ class TodoCreateState extends State<TodoCreate> {
                 new Text('Task Title: '),
                 new Expanded(
                     child: new TextField(
-                      controller: _controller,
-                    )
-                )
+                  controller: _controller,
+                ))
               ],
             ),
             new Row(
@@ -285,8 +288,7 @@ class TodoCreateState extends State<TodoCreate> {
                       print(_file.path);
                       _taskImage = _file.path;
                     },
-                    child: new Text('choose image')
-                )
+                    child: new Text('choose image'))
               ],
             ),
             new Row(
@@ -297,26 +299,30 @@ class TodoCreateState extends State<TodoCreate> {
                         if (_taskImage != null) {
                           File taskImageFile = await new File(_taskImage);
                           final StorageReference storageRef = FirebaseStorage
-                              .instance.ref().child(new DateTime.now()
-                                  .millisecondsSinceEpoch.toString())
+                              .instance
+                              .ref()
+                              .child(new DateTime.now()
+                                  .millisecondsSinceEpoch
+                                  .toString())
                               .child(_taskImage.split('/').last);
-                          UploadTaskSnapshot uploadTaskSnapshot = await storageRef.put(taskImageFile).future;
-                          Firestore.instance.collection(
-                              'tasks')
-                              .reference().document()
+                          UploadTaskSnapshot uploadTaskSnapshot =
+                              await storageRef.put(taskImageFile).future;
+                          Firestore.instance
+                              .collection('tasks')
+                              .reference()
+                              .document()
                               .setData({
                             "title": _controller.text,
                             "done": false,
                             "image": uploadTaskSnapshot.downloadUrl.toString()
                           });
                         } else {
-                          Firestore.instance.collection(
-                              'tasks')
-                              .reference().document()
-                              .setData({
-                            "title": _controller.text,
-                            "done": false
-                          });
+                          Firestore.instance
+                              .collection('tasks')
+                              .reference()
+                              .document()
+                              .setData(
+                                  {"title": _controller.text, "done": false});
                         }
                         Navigator.pop(context);
                       }
@@ -325,8 +331,6 @@ class TodoCreateState extends State<TodoCreate> {
               ],
             )
           ],
-        )
-    );
+        ));
   }
-
 }
