@@ -11,10 +11,10 @@ void main() {
 }
 
 const todoLineHeight = 63.0;
-const appBarHeight = 63.213;
-const appBarExpandedHeight = 212.054;
-const appBarMinFontSize = 27.81;
-const appBarMaxFontSize = 40.48;
+const appBarHeight = 63.0;
+const appBarExpandedHeight = 212.0;
+const appBarMinFontSize = 27.8;
+const appBarMaxFontSize = 40.0;
 const doneStyle = const TextStyle(
   color: TodoColors.done,
   decoration: TextDecoration.lineThrough,
@@ -146,10 +146,11 @@ class TodoHomeState extends State<TodoHome> {
   }
 
   Widget _buildTitle(BuildContext context, BoxConstraints constraints) {
-    var expansion = constraints.maxHeight - appBarHeight;
-    var t = expansion / (appBarExpandedHeight - appBarHeight);
-    var fontSize =
-        lerpDouble(appBarMinFontSize, appBarMaxFontSize, t);
+    var fontSize = lerpDouble(
+      appBarMinFontSize,
+      appBarMaxFontSize,
+      (constraints.maxHeight - appBarHeight) / (appBarExpandedHeight - appBarHeight),
+    );
     return new Center(
       child: new Text(
         'todo',
