@@ -87,15 +87,15 @@ class _CategoryRouteState extends State<CategoryRoute> {
     }),
   ];
 
-  static const _icons = const <IconData>[
-    Icons.short_text,
-    Icons.crop_square,
-    Icons.threed_rotation,
-    Icons.weekend,
-    Icons.access_time,
-    Icons.sd_storage,
-    Icons.battery_charging_full,
-    Icons.attach_money,
+  static const _icons = const <String>[
+    'assets/icons/length.png',
+    'assets/icons/area.png',
+    'assets/icons/volume.png',
+    'assets/icons/mass.png',
+    'assets/icons/time.png',
+    'assets/icons/digital_storage.png',
+    'assets/icons/power.png',
+    'assets/icons/currency.png',
   ];
 
   @override
@@ -129,8 +129,8 @@ class _CategoryRouteState extends State<CategoryRoute> {
         _categories.add(new Category(
           name: key,
           units: units,
-          color: _baseColors[ci % _baseColors.length],
-          icon: _icons[ci % _icons.length],
+          color: _baseColors[ci],
+          iconLocation: _icons[ci],
         ));
       });
       ci += 1;
@@ -143,7 +143,7 @@ class _CategoryRouteState extends State<CategoryRoute> {
     setState(() {
       _categories.add(new Category(
         name: apiCategory['name'],
-        color: _baseColors[_baseColors.length - 1],
+        color: _baseColors.last,
       ));
     });
     var api = new Api();
@@ -164,8 +164,8 @@ class _CategoryRouteState extends State<CategoryRoute> {
         _categories.add(new Category(
           name: apiCategory['name'],
           units: units,
-          color: _baseColors[_baseColors.length - 1],
-          icon: _icons[_icons.length - 1],
+          color: _baseColors.last,
+          iconLocation: _icons.last,
         ));
       });
     }
