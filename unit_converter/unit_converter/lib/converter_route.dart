@@ -43,35 +43,34 @@ class ConverterRoute extends StatefulWidget {
 class _ConverterRouteState extends State<ConverterRoute> {
   Unit _fromValue;
   Unit _toValue;
-  String _inputValue;
+  double _inputValue;
   String _convertedValue = 'Output';
   bool _showErrorUI = false;
+  bool _showValidationError = false;
 
   Future<Null> _updateConversion() async {
-    if (_inputValue != null && _inputValue.isNotEmpty) {
-      // Our API has a handy convert function, so we can use that for
-      // the Currency category
-      if (widget.name == apiCategory['name']) {
-        var api = new Api();
-        var conversion = await api.convert(
-            apiCategory['route'], _inputValue, _fromValue.name, _toValue.name);
-        // API error or not connected to the internet
-        if (conversion == null) {
-          setState(() {
-            _showErrorUI = true;
-          });
-          return;
-        }
+    // Our API has a handy convert function, so we can use that for
+    // the Currency category
+    if (widget.name == apiCategory['name']) {
+      var api = new Api();
+      var conversion = await api.convert(apiCategory['route'],
+          _inputValue.toString(), _fromValue.name, _toValue.name);
+      // API error or not connected to the internet
+      if (conversion == null) {
         setState(() {
-          _convertedValue = _format(conversion);
+          _showErrorUI = true;
         });
-      } else {
-        // For the static units, we do the conversion ourselves
-        setState(() {
-          _convertedValue = _format((double.parse(_inputValue) *
-              (_toValue.conversion / _fromValue.conversion)));
-        });
+        return;
       }
+      setState(() {
+        _convertedValue = _format(conversion);
+      });
+    } else {
+      // For the static units, we do the conversion ourselves
+      setState(() {
+        _convertedValue = _format(
+            _inputValue * (_toValue.conversion / _fromValue.conversion));
+      });
     }
   }
 
@@ -93,12 +92,22 @@ class _ConverterRouteState extends State<ConverterRoute> {
 
   void _updateInputValue(String input) {
     setState(() {
-      _inputValue = input;
-      if (_inputValue == null || _inputValue.isEmpty) {
+      if (input == null || input.isEmpty) {
         _convertedValue = 'Output';
+      } else {
+        // Even though we are using the numerical keyboard, we still have to check
+        // for non-numerical input such as '5..0' or '6 -3'
+        try {
+          var inputDouble = double.parse(input);
+          _showValidationError = false;
+          _inputValue = inputDouble;
+          _updateConversion();
+        } on Exception catch (e) {
+          print('Error: $e');
+          _showValidationError = true;
+        }
       }
     });
-    _updateConversion();
   }
 
   Unit _getUnit(String unitName) {
@@ -201,20 +210,34 @@ class _ConverterRouteState extends State<ConverterRoute> {
           // This is the widget that accepts text input. In this case, it
           // accepts numbers and calls the onChanged property on update.
           // You can read more about it here: https://flutter.io/text-input
-          new TextField(
-            style: Theme.of(context).textTheme.display1.copyWith(
-                  color: Colors.black,
-                ),
-            decoration: new InputDecoration(
-              hintText: 'Enter value',
-              hintStyle: Theme.of(context).textTheme.display1.copyWith(
-                    color: Colors.grey[500],
+          new Row(
+            children: <Widget>[
+              new Expanded(
+                child: new TextField(
+                  style: Theme.of(context).textTheme.display1.copyWith(
+                        color: _showValidationError
+                            ? Colors.red[500]
+                            : Colors.black,
+                      ),
+                  decoration: new InputDecoration(
+                    hintText: 'Enter value',
+                    hintStyle: Theme.of(context).textTheme.display1.copyWith(
+                          color: Colors.grey[500],
+                        ),
                   ),
-            ),
-            // Since we only want numerical input, we use a number keyboard. There
-            // are also other keyboards for dates, emails, phone numbers, etc.
-            keyboardType: TextInputType.number,
-            onChanged: _updateInputValue,
+                  // Since we only want numerical input, we use a number keyboard. There
+                  // are also other keyboards for dates, emails, phone numbers, etc.
+                  keyboardType: TextInputType.number,
+                  onChanged: _updateInputValue,
+                ),
+              ),
+              _showValidationError
+                  ? new Icon(
+                      Icons.error,
+                      color: Colors.red[500],
+                    )
+                  : new Container(),
+            ],
           ),
           new Container(
             // You set the color of the dropdown here, not in _createDropdown()
@@ -311,6 +334,9 @@ class _ConverterRouteState extends State<ConverterRoute> {
       ),
     );
 
+    // Based on the device size, figure out how to best lay out our
+    // conversion screen
+    var deviceSize = MediaQuery.of(context).size;
     var conversionScreen = new SingleChildScrollView(
       child: new Padding(
         padding: const EdgeInsets.all(16.0),
@@ -325,6 +351,47 @@ class _ConverterRouteState extends State<ConverterRoute> {
         ),
       ),
     );
+    if (deviceSize.height < deviceSize.width) {
+      conversionScreen = new SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: new Padding(
+          padding: const EdgeInsets.only(
+            left: 16.0,
+            right: 16.0,
+            top: 16.0,
+            bottom: 60.0,
+          ),
+          child: new Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              new Expanded(
+                flex: 7,
+                child: new Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    input,
+                    output,
+                  ],
+                ),
+              ),
+              new Padding(
+                padding: const EdgeInsets.only(left: 16.0),
+              ),
+              new Expanded(
+                flex: 5,
+                child: new Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    didYouKnow,
+                    description,
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
     var selectCategoryHeader = new Container(
       alignment: FractionalOffset.bottomLeft,
