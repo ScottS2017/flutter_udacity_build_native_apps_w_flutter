@@ -4,8 +4,8 @@
 
 import 'package:flutter/material.dart';
 
-import 'unit.dart';
-import 'converter_route.dart';
+import 'package:unit_converter/converter_route.dart';
+import 'package:unit_converter/unit.dart';
 
 /// A Category for a list of units.
 class Category extends StatelessWidget {
@@ -16,11 +16,13 @@ class Category extends StatelessWidget {
 
   /// Constructor
   Category({
+    Key key,
     this.name,
     this.units,
     this.color,
     this.iconLocation,
-  });
+  })
+      : super(key: key);
 
   /// Navigates to the unit converter page
   void _navigateToConverter(BuildContext context) {
