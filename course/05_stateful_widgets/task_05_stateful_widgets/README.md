@@ -1,8 +1,7 @@
 # task_05_stateful_widgets
 
-A new Flutter project.
+Make CategoryRoute and ConverterRoute StatefulWidgets. You won't notice any visual changes.
 
-## Getting Started
+We added some code to generate some mock units. The Converter Route will look like this:
 
-For help getting started with Flutter, view our online
-[documentation](http://flutter.io/).
+<img src='../../screenshots/05_stateful_widgets.png' width='350'>

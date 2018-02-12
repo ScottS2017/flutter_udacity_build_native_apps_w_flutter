@@ -1,37 +1,28 @@
-// Copyright 2017 The Chromium Authors. All rights reserved.
+// Copyright 2018 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
 
-import 'package:unit_converter/converter_route.dart';
-import 'package:unit_converter/unit.dart';
+import 'package:solution_04_navigation/converter_route.dart';
 
 final _borderRadius = new BorderRadius.circular(4.0);
 
-/// A Category for a list of units.
+/// A Category widget for a list of units.
 class Category extends StatelessWidget {
   final String name;
-  final List<Unit> units;
   final ColorSwatch color;
-  final String iconLocation;
+  final IconData iconLocation;
 
-  /// Constructor.
+  /// Constructor
   const Category({
-
-    Key key,
     this.name,
-    this.units,
     this.color,
     this.iconLocation,
-  })
-      : super(key: key);
+  });
 
-  /// Navigates to the unit converter page.
+  /// Navigates to the unit converter page
   void _navigateToConverter(BuildContext context) {
-    if (Navigator.of(context).canPop()) {
-      Navigator.of(context).pop();
-    }
     Navigator.of(context).push(new MaterialPageRoute<Null>(
       builder: (BuildContext context) {
         return new Scaffold(
@@ -42,17 +33,12 @@ class Category extends StatelessWidget {
               style: Theme.of(context).textTheme.display1,
             ),
             centerTitle: true,
-            backgroundColor: color[100],
+            backgroundColor: color,
           ),
           body: new ConverterRoute(
             name: name,
-            units: units,
             color: color,
           ),
-          // This prevents the onscreen keyboard from affecting the size of the
-          // screen, and the space given to widgets.
-          // See https://docs.flutter.io/flutter/material/Scaffold/resizeToAvoidBottomPadding.html
-          resizeToAvoidBottomPadding: false,
         );
       },
     ));
@@ -62,11 +48,9 @@ class Category extends StatelessWidget {
   ///
   /// This information includes the icon, name, and color for the [Category].
   @override
-  // This `context` parameter describes the location of this widget in the
-  // widget tree. It can be used for grabbing Theme data from the nearest
-  // Theme ancestor in the tree. Below, we grab the display1 text theme.
   Widget build(BuildContext context) {
     return new Container(
+      color: Colors.white,
       height: 100.0,
       child: new Stack(
         children: <Widget>[
@@ -74,13 +58,18 @@ class Category extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               new Container(
+                width: 70.0,
                 margin: const EdgeInsets.all(16.0),
                 decoration: new BoxDecoration(
                   borderRadius: _borderRadius,
-                  color: color[100],
+                  color: color,
                 ),
-                child:
-                    iconLocation != null ? new Image.asset(iconLocation) : null,
+                child: iconLocation != null
+                    ? new Icon(
+                  iconLocation,
+                  size: 60.0,
+                )
+                    : null,
               ),
               new Container(
                 padding: const EdgeInsets.all(16.0),
@@ -89,10 +78,10 @@ class Category extends StatelessWidget {
                     name.toUpperCase(),
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.display1.copyWith(
-                          color: Colors.grey[700],
-                          fontSize: 24.0,
-                          fontWeight: FontWeight.w700,
-                        ),
+                      color: Colors.grey[700],
+                      fontSize: 24.0,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
               ),
