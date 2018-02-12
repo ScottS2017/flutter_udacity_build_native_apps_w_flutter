@@ -20,6 +20,8 @@ const _bottomMargin = const EdgeInsets.only(
   bottom: 16.0,
 );
 
+const _bottomSheetBorderRadius = const Radius.circular(32.0);
+
 /// Converter Route (page) where users can input amounts to convert
 class ConverterRoute extends StatefulWidget {
   final String name;
@@ -122,14 +124,18 @@ class _ConverterRouteState extends State<ConverterRoute> {
     setState(() {
       _fromValue = _getUnit(unitName);
     });
-    _updateConversion();
+    if (_inputValue != null) {
+      _updateConversion();
+    }
   }
 
   void _updateToConversion(dynamic unitName) {
     setState(() {
       _toValue = _getUnit(unitName);
     });
-    _updateConversion();
+    if (_inputValue != null) {
+      _updateConversion();
+    }
   }
 
   @override
@@ -342,7 +348,7 @@ class _ConverterRouteState extends State<ConverterRoute> {
         horizontal: 32.0,
       ),
       child: new Text(
-        'Select category',
+        'Select category'.toUpperCase(),
         style: Theme.of(context).textTheme.subhead.copyWith(
               fontWeight: FontWeight.w600,
               color: Colors.grey[700],
@@ -350,8 +356,8 @@ class _ConverterRouteState extends State<ConverterRoute> {
       ),
       decoration: new BoxDecoration(
         borderRadius: new BorderRadius.only(
-          topLeft: new Radius.circular(32.0),
-          topRight: new Radius.circular(32.0),
+          topLeft: _bottomSheetBorderRadius,
+          topRight: _bottomSheetBorderRadius,
         ),
         color: Colors.white,
       ),
@@ -365,18 +371,16 @@ class _ConverterRouteState extends State<ConverterRoute> {
             showModalBottomSheet<Null>(
                 context: context,
                 builder: (BuildContext context) {
-                  return new Container(
-                    child: new SingleChildScrollView(
-                      child: new Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          selectCategoryHeader,
-                          new CategoryRoute(
-                            footer: true,
-                          ),
-                        ],
+                  return new Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      selectCategoryHeader,
+                      new Expanded(
+                        child: new CategoryRoute(
+                          footer: true,
+                        ),
                       ),
-                    ),
+                    ],
                   );
                 });
           },
