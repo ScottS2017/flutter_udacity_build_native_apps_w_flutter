@@ -4,17 +4,16 @@
 
 import 'package:meta/meta.dart';
 
-/// Information about a [Unit]
+/// A unit of measurement is a definite magnitude of a quantity, used as a
+/// standard for measurement.
 class Unit {
   final String name;
   final double conversion;
-  final String description;
 
-   const Unit({
+  const Unit({
     @required this.name,
-    this.conversion,
-    @required this.description,
+    @required this.conversion,
   })
       : assert(name != null),
-        assert(description != null);
+        assert(conversion != null);
 }

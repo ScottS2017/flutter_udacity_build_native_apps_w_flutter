@@ -5,13 +5,14 @@
 import 'package:flutter/material.dart';
 
 import 'package:solution_04_navigation/category.dart';
+import 'package:solution_04_navigation/unit.dart';
 
-/// Category Route (page)
+/// Category Route (page).
 ///
 /// This is the "home" page of the Unit Converter. It shows a header bar and
 /// a grid of [Categories].
 class CategoryRoute extends StatelessWidget {
-  /// Constructor
+  /// Constructor.
   const CategoryRoute({
     Key key,
   })
@@ -43,11 +44,21 @@ class CategoryRoute extends StatelessWidget {
     Colors.red,
   ];
 
-  /// Makes the correct number of rows for the List View, based on whether the
-  /// device is portrait or landscape.
+  /// Returns a list of mock [Unit]s.
+  List<Unit> _retrieveUnitList(String categoryName) {
+    var units = <Unit>[];
+    for (var i = 0; i < 10; i++) {
+      units.add(new Unit(
+        name: 'Test $categoryName Unit $i',
+        conversion: i.toDouble(),
+      ));
+    }
+    return units;
+  }
+
+  /// Makes the correct number of rows for the list view.
   ///
-  /// For portrait, we use a ListView
-  /// For landscape, we use a GridView
+  /// For portrait, we use a [ListView].
   Widget _buildCategoryWidgets(List<Widget> categories) {
     return new ListView.builder(
       itemBuilder: (BuildContext context, int index) => categories[index],
@@ -61,9 +72,10 @@ class CategoryRoute extends StatelessWidget {
 
     for (var i = 0; i < _categoryNames.length; i++) {
       categories.add(new Category(
-        name: _categoryNames[i],
         color: _baseColors[i],
         iconLocation: Icons.cake,
+        name: _categoryNames[i],
+        units: _retrieveUnitList(_categoryNames[i]),
       ));
     }
 

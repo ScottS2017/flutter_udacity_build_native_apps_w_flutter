@@ -5,25 +5,28 @@
 import 'package:flutter/material.dart';
 
 import 'package:task_04_navigation/converter_route.dart';
+import 'package:task_04_navigation/unit.dart';
 
 final _borderRadius = new BorderRadius.circular(4.0);
 
-/// A Category widget for a list of units.
+/// A Category widget for a list of [Unit]s.
 class Category extends StatelessWidget {
-  final String name;
   final ColorSwatch color;
   final IconData iconLocation;
+  final String name;
+  final List<Unit> units;
 
-  /// Constructor
+  /// Constructor.
   const Category({
     Key key,
-    this.name,
     this.color,
     this.iconLocation,
+    this.name,
+    this.units,
   })
       : super(key: key);
 
-  /// Navigates to the unit converter page
+  /// Navigates to the [ConverterRoute].
   void _navigateToConverter(BuildContext context) {
     // TODO: Using the Navigator, navigate to the Converter Route
     // Specs:
@@ -31,7 +34,7 @@ class Category extends StatelessWidget {
     //    as the Category widget
     //  - The Title of the AppBar should be the name of the Category and centered
     //  - The Title text style should be the Text Theme's `display1`
-    //  - Pass the name and color to the ConverterRoute
+    //  - Pass the name, color, and units to the ConverterRoute
   }
 
   /// Builds a custom widget that shows unit [Category] information.
@@ -80,6 +83,7 @@ class Category extends StatelessWidget {
           new Material(
             // Adds inkwell animation when tapped
             child: new InkWell(
+              // TODO update this onTap property to call _navigateToConverter
               onTap: () {
                 print('I was tapped!');
               },
