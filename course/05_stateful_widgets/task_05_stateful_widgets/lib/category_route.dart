@@ -7,18 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:task_05_stateful_widgets/category.dart';
 import 'package:task_05_stateful_widgets/unit.dart';
 
-const _rightPadding =
-    const Padding(padding: const EdgeInsets.only(right: 16.0));
-const _bottomPadding =
-    const Padding(padding: const EdgeInsets.only(bottom: 16.0));
-
-/// Category Route (page)
+/// Category Route (page).
 ///
 /// This is the "home" page of the Unit Converter. It shows a header bar and
 /// a grid of [Categories].
 // TODO: Make CategoryRoute a StatefulWidget
 class CategoryRoute extends StatelessWidget {
-  /// Constructor
+  /// Constructor.
   const CategoryRoute({
     Key key,
   })
@@ -52,43 +47,24 @@ class CategoryRoute extends StatelessWidget {
     Colors.red,
   ];
 
-  /// Returns a list of mock [Unit]s
+  /// Returns a list of mock [Unit]s.
   List<Unit> _retrieveUnitList(String categoryName) {
-    var units = <Unit>[];
-    for (var i = 0; i < 10; i++) {
-      units.add(new Unit(
+    return new List.generate(10, (int i) {
+      return new Unit(
         name: 'Test $categoryName Unit $i',
         conversion: i.toDouble(),
-        description: 'This is a sorry test unit for $categoryName',
-      ));
-    }
-    return units;
+      );
+    });
   }
 
-  /// Makes the correct number of rows for the Grid View
-  List<Widget> _makeGridRows(List<Category> categories) {
-    // Why do we pass in `_categories.toList()` instead of just `_categories`?
-    // Widgets are supposed to be deeply immutable objects. We're passing in
-    // _categories to this GridView, which changes as we load in each
-    // [Category]. So, each time _categories changes, we need to pass in a new
-    // list. The .toList() function does this.
-    // For more details, see https://github.com/dart-lang/sdk/issues/27755
-    var rows = <Widget>[];
-    for (var i = 0; i < categories.length; i += 2) {
-      rows.add(new Expanded(
-        child: new Row(
-          children: <Widget>[
-            new Expanded(child: categories[i]),
-            _rightPadding,
-            new Expanded(child: categories[i + 1]),
-          ],
-        ),
-      ));
-      if (i + 2 < categories.length) {
-        rows.add(_bottomPadding);
-      }
-    }
-    return rows;
+  /// Makes the correct number of rows for the list view.
+  ///
+  /// For portrait, we use a [ListView].
+  Widget _buildCategoryWidgets(List<Widget> categories) {
+    return new ListView.builder(
+      itemBuilder: (BuildContext context, int index) => categories[index],
+      itemCount: categories.length,
+    );
   }
 
   @override
@@ -97,25 +73,22 @@ class CategoryRoute extends StatelessWidget {
     // save this as a variable inside the State object and create
     // the list at initialization.
     // This way, you also don't have to pass in the list of categories to
-    // _makeGridRows()
+    // _buildCategoryWidgets()
     final categories = <Category>[];
+
     for (var i = 0; i < _categoryNames.length; i++) {
       categories.add(new Category(
-        name: _categoryNames[i],
-        units: _retrieveUnitList(_categoryNames[i]),
         color: _baseColors[i],
         iconLocation: Icons.cake,
+        name: _categoryNames[i],
+        units: _retrieveUnitList(_categoryNames[i]),
       ));
     }
 
-    final grid = new Container(
+    final listView = new Container(
       color: Colors.white,
       padding: const EdgeInsets.all(16.0),
-      child: new Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: _makeGridRows(categories),
-      ),
+      child: _buildCategoryWidgets(categories),
     );
 
     final headerBar = new AppBar(
@@ -132,7 +105,7 @@ class CategoryRoute extends StatelessWidget {
 
     return new Scaffold(
       appBar: headerBar,
-      body: grid,
+      body: listView,
     );
   }
 }

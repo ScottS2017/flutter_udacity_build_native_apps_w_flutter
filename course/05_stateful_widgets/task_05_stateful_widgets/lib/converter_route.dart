@@ -3,22 +3,28 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+import 'package:meta/meta.dart';
 
 import 'package:task_05_stateful_widgets/unit.dart';
 
-/// Converter route (page) where users can input amounts to convert
+/// Converter route (page) where users can input amounts to convert.
 // TODO: Make ConverterRoute a StatefulWidget
 class ConverterRoute extends StatelessWidget {
-  final String name;
+  /// Color for this [Category].
   final Color color;
+
+  /// This [Category]'s name.
+  final String name;
+
+  /// [Unit]s for this [Category].
   final List<Unit> units;
 
-  /// Constructor
+  /// Constructor.
   const ConverterRoute({
     Key key,
-    this.name,
-    this.color,
-    this.units,
+    @required this.name,
+    @required this.color,
+    @required this.units,
   })
       : super(key: key);
 
@@ -29,9 +35,9 @@ class ConverterRoute extends StatelessWidget {
     // you'll have to reference this using `widget.units`
     final unitWidgets = units.map((Unit unit) {
       return new Container(
+        color: color,
         margin: const EdgeInsets.all(8.0),
         padding: const EdgeInsets.all(16.0),
-        color: color,
         child: new Column(
           children: <Widget>[
             new Text(
@@ -46,9 +52,8 @@ class ConverterRoute extends StatelessWidget {
         ),
       );
     }).toList();
-    return new ListView.builder(
-      itemBuilder: (BuildContext context, int index) => unitWidgets[index],
-      itemCount: unitWidgets.length,
+    return new ListView(
+      children: unitWidgets,
     );
   }
 }
