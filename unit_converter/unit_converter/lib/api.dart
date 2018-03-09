@@ -31,7 +31,7 @@ class Api {
   Future<List> getUnits(String category) async {
     // You can directly call httpClient.get() with a String as input,
     // but to make things cleaner, we can pass in a Uri.
-    final uri = new Uri.https(url, '/$category');
+    final uri = Uri.https(url, '/$category');
     try {
       final response = await httpClient.get(uri);
       if (response.statusCode != 200) {
@@ -57,7 +57,7 @@ class Api {
       String category, String amount, String fromUnit, String toUnit) async {
     // You can directly call httpClient.get() with a String as input,
     // but to make things cleaner, we can pass in a Uri.
-    final uri = new Uri.https(url, '/$category/convert',
+    final uri = Uri.https(url, '/$category/convert',
         {'amount': amount, 'from': fromUnit, 'to': toUnit});
     try {
       final response = await httpClient.get(uri);

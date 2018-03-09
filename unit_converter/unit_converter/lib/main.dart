@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:unit_converter/category_route.dart';
 
 void main() {
-  runApp(new UnitConverter());
+  runApp(UnitConverter());
 }
 
 /// This widget is the root of our application.
@@ -17,12 +17,13 @@ void main() {
 class UnitConverter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Unit Converter',
-      theme: new ThemeData(
+      theme: ThemeData(
         fontFamily: 'Source Sans Pro',
       ),
-      home: new CategoryRoute(
+      home: CategoryRoute(
         footer: false,
       ),
     );

@@ -10,17 +10,17 @@ import 'package:unit_converter/api.dart';
 import 'package:unit_converter/category_route.dart';
 import 'package:unit_converter/unit.dart';
 
-const _padding = const EdgeInsets.all(16.0);
+const _padding = EdgeInsets.all(16.0);
 
-const _horizontalPadding = const EdgeInsets.symmetric(
+const _horizontalPadding = EdgeInsets.symmetric(
   horizontal: 16.0,
 );
 
-const _bottomMargin = const EdgeInsets.only(
+const _bottomMargin = EdgeInsets.only(
   bottom: 16.0,
 );
 
-const _bottomSheetBorderRadius = const Radius.circular(32.0);
+const _bottomSheetBorderRadius = Radius.circular(32.0);
 
 /// Converter Route (page) where users can input amounts to convert.
 class ConverterRoute extends StatefulWidget {
@@ -30,15 +30,13 @@ class ConverterRoute extends StatefulWidget {
 
   /// Constructor.
   const ConverterRoute({
-    Key key,
     this.name,
     this.color,
     this.units,
-  })
-      : super(key: key);
+  });
 
   @override
-  _ConverterRouteState createState() => new _ConverterRouteState();
+  _ConverterRouteState createState() => _ConverterRouteState();
 }
 
 class _ConverterRouteState extends State<ConverterRoute> {
@@ -53,7 +51,7 @@ class _ConverterRouteState extends State<ConverterRoute> {
     // Our API has a handy convert function, so we can use that for
     // the Currency category
     if (widget.name == apiCategory['name']) {
-      final api = new Api();
+      final api = Api();
       final conversion = await api.convert(apiCategory['route'],
           _inputValue.toString(), _fromValue.name, _toValue.name);
       // API error or not connected to the internet
@@ -141,18 +139,18 @@ class _ConverterRouteState extends State<ConverterRoute> {
   @override
   Widget build(BuildContext context) {
     if (widget.units == null || _showErrorUI) {
-      return new Container(
+      return Container(
         color: widget.color[200],
-        child: new Column(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            new Icon(
+            Icon(
               Icons.error_outline,
               size: 180.0,
               color: Colors.white,
             ),
-            new Text(
+            Text(
               "Oh no! We can't connect right now!",
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.headline.copyWith(
@@ -165,10 +163,10 @@ class _ConverterRouteState extends State<ConverterRoute> {
     }
     final units = <DropdownMenuItem>[];
     for (var unit in widget.units) {
-      units.add(new DropdownMenuItem(
+      units.add(DropdownMenuItem(
         value: unit.name,
-        child: new Container(
-          child: new Text(
+        child: Container(
+          child: Text(
             unit.name,
             softWrap: true,
           ),
@@ -187,14 +185,14 @@ class _ConverterRouteState extends State<ConverterRoute> {
     }
 
     Widget _createDropdown(String name, ValueChanged<dynamic> onChanged) {
-      return new Theme(
+      return Theme(
         // This only sets the color of the dropdown menu item, not the dropdown
         // itself
         data: Theme.of(context).copyWith(
               canvasColor: Colors.white,
             ),
-        child: new DropdownButtonHideUnderline(
-          child: new DropdownButton(
+        child: DropdownButtonHideUnderline(
+          child: DropdownButton(
             value: name,
             items: units,
             onChanged: onChanged,
@@ -204,27 +202,27 @@ class _ConverterRouteState extends State<ConverterRoute> {
       );
     }
 
-    final input = new Container(
+    final input = Container(
       color: Colors.white,
       margin: _bottomMargin,
       padding: _horizontalPadding,
-      child: new Column(
+      child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           // This is the widget that accepts text input. In this case, it
           // accepts numbers and calls the onChanged property on update.
           // You can read more about it here: https://flutter.io/text-input
-          new Row(
+          Row(
             children: <Widget>[
-              new Expanded(
-                child: new TextField(
+              Expanded(
+                child: TextField(
                   style: Theme.of(context).textTheme.display1.copyWith(
                         color: _showValidationError
                             ? Colors.red[500]
                             : Colors.black,
                       ),
-                  decoration: new InputDecoration(
+                  decoration: InputDecoration(
                     hintText: 'Enter value',
                     hintStyle: Theme.of(context).textTheme.display1.copyWith(
                           color: Colors.grey[500],
@@ -237,36 +235,36 @@ class _ConverterRouteState extends State<ConverterRoute> {
                 ),
               ),
               _showValidationError
-                  ? new Icon(
+                  ? Icon(
                       Icons.error,
                       color: Colors.red[500],
                     )
-                  : new Container(),
+                  : Container(),
             ],
           ),
-          new Container(
+          Container(
             // You set the color of the dropdown here, not in _createDropdown()
             color: Colors.white,
-            padding: const EdgeInsets.symmetric(
+            padding: EdgeInsets.symmetric(
               horizontal: 8.0,
               vertical: 8.0,
             ),
             child: _createDropdown(_fromValue.name, _updateFromConversion),
           ),
-          new Container(
+          Container(
             color: Colors.white,
-            padding: const EdgeInsets.only(
+            padding: EdgeInsets.only(
               left: 8.0,
               right: 8.0,
             ),
-            child: new Text(
+            child: Text(
               'to',
               textAlign: TextAlign.left,
             ),
           ),
-          new Container(
+          Container(
             color: Colors.white,
-            padding: const EdgeInsets.symmetric(
+            padding: EdgeInsets.symmetric(
               horizontal: 8.0,
               vertical: 8.0,
             ),
@@ -276,12 +274,12 @@ class _ConverterRouteState extends State<ConverterRoute> {
       ),
     );
 
-    final output = new Container(
+    final output = Container(
       color: Colors.white,
       alignment: FractionalOffset.centerLeft,
       padding: _padding,
       margin: _bottomMargin,
-      child: new Text(
+      child: Text(
         _convertedValue,
         style: Theme.of(context).textTheme.display1.copyWith(
               color:
@@ -292,13 +290,13 @@ class _ConverterRouteState extends State<ConverterRoute> {
 
     // Based on the box constraints of our device, figure out how to best
     // lay out our conversion screen
-    final conversionScreen = new LayoutBuilder(
+    final conversionScreen = LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         if (constraints.maxHeight > constraints.maxWidth) {
-          return new SingleChildScrollView(
-            child: new Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: new Column(
+          return SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   input,
@@ -308,21 +306,21 @@ class _ConverterRouteState extends State<ConverterRoute> {
             ),
           );
         } else {
-          return new SingleChildScrollView(
+          return SingleChildScrollView(
             scrollDirection: Axis.vertical,
-            child: new Padding(
-              padding: const EdgeInsets.only(
+            child: Padding(
+              padding: EdgeInsets.only(
                 left: 16.0,
                 right: 16.0,
                 top: 16.0,
                 bottom: 60.0,
               ),
-              child: new Row(
+              child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  new Expanded(
+                  Expanded(
                     flex: 7,
-                    child: new Column(
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         input,
@@ -330,8 +328,8 @@ class _ConverterRouteState extends State<ConverterRoute> {
                       ],
                     ),
                   ),
-                  new Padding(
-                    padding: const EdgeInsets.only(left: 16.0),
+                  Padding(
+                    padding: EdgeInsets.only(left: 16.0),
                   ),
                 ],
               ),
@@ -341,21 +339,21 @@ class _ConverterRouteState extends State<ConverterRoute> {
       },
     );
 
-    final selectCategoryHeader = new Container(
+    final selectCategoryHeader = Container(
       alignment: FractionalOffset.bottomLeft,
-      padding: const EdgeInsets.symmetric(
+      padding: EdgeInsets.symmetric(
         vertical: 16.0,
         horizontal: 32.0,
       ),
-      child: new Text(
+      child: Text(
         'Select category'.toUpperCase(),
         style: Theme.of(context).textTheme.subhead.copyWith(
               fontWeight: FontWeight.w600,
               color: Colors.grey[700],
             ),
       ),
-      decoration: new BoxDecoration(
-        borderRadius: new BorderRadius.only(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.only(
           topLeft: _bottomSheetBorderRadius,
           topRight: _bottomSheetBorderRadius,
         ),
@@ -363,20 +361,20 @@ class _ConverterRouteState extends State<ConverterRoute> {
       ),
     );
 
-    final selectCategoryScreen = new Column(
+    final selectCategoryScreen = Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
-        new GestureDetector(
+        GestureDetector(
           onTap: () {
             showModalBottomSheet<Null>(
                 context: context,
                 builder: (BuildContext context) {
-                  return new Column(
+                  return Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
                       selectCategoryHeader,
-                      new Expanded(
-                        child: new CategoryRoute(
+                      Expanded(
+                        child: CategoryRoute(
                           footer: true,
                         ),
                       ),
@@ -389,9 +387,9 @@ class _ConverterRouteState extends State<ConverterRoute> {
       ],
     );
 
-    return new Container(
+    return Container(
       color: widget.color[200],
-      child: new Stack(
+      child: Stack(
         children: <Widget>[
           conversionScreen,
           selectCategoryScreen,

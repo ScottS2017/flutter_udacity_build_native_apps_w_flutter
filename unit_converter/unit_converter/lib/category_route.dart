@@ -14,12 +14,12 @@ import 'package:unit_converter/unit.dart';
 /// For this app, the only category (endpoint) we retrieve from an API is Currency.
 ///
 /// If we had more, we could keep a List of categories here.
-const apiCategory = const {
+const apiCategory = {
   'name': 'Currency',
   'route': 'currency',
 };
 
-const _appBarColor = const Color(0xFF013487);
+const _appBarColor = Color(0xFF013487);
 
 /// Category Route (page).
 ///
@@ -29,63 +29,61 @@ class CategoryRoute extends StatefulWidget {
   final bool footer;
 
   const CategoryRoute({
-    Key key,
     this.footer,
-  })
-      : super(key: key);
+  });
 
   @override
-  _CategoryRouteState createState() => new _CategoryRouteState();
+  _CategoryRouteState createState() => _CategoryRouteState();
 }
 
 class _CategoryRouteState extends State<CategoryRoute> {
   // Consider omitting the types for local variables. For more details on Effective
   // Dart Usage, see https://www.dartlang.org/guides/language/effective-dart/usage
   final _categories = <Category>[];
-  static const _baseColors = const <ColorSwatch>[
-    const ColorSwatch(200, const {
-      50: const Color(0xFF579186),
-      100: const Color(0xFF0abc9b),
-      200: const Color(0xFF1f685a),
+  static const _baseColors = <ColorSwatch>[
+    ColorSwatch(200, {
+      50: Color(0xFF579186),
+      100: Color(0xFF0abc9b),
+      200: Color(0xFF1f685a),
     }),
-    const ColorSwatch(200, const {
-      50: const Color(0xFFffd28e),
-      100: const Color(0xFFffa41c),
-      200: const Color(0xFFbc6e0b),
+    ColorSwatch(200, {
+      50: Color(0xFFffd28e),
+      100: Color(0xFFffa41c),
+      200: Color(0xFFbc6e0b),
     }),
-    const ColorSwatch(200, const {
-      50: const Color(0xFFffb7de),
-      100: const Color(0xFFf94cbf),
-      200: const Color(0xFF822a63),
+    ColorSwatch(200, {
+      50: Color(0xFFffb7de),
+      100: Color(0xFFf94cbf),
+      200: Color(0xFF822a63),
     }),
-    const ColorSwatch(200, const {
-      50: const Color(0xFF8899a8),
-      100: const Color(0xFFa9cae8),
-      200: const Color(0xFF395f82),
+    ColorSwatch(200, {
+      50: Color(0xFF8899a8),
+      100: Color(0xFFa9cae8),
+      200: Color(0xFF395f82),
     }),
-    const ColorSwatch(200, const {
-      50: const Color(0xFFead37e),
-      100: const Color(0xFFffe070),
-      200: const Color(0xFFd6ad1b),
+    ColorSwatch(200, {
+      50: Color(0xFFead37e),
+      100: Color(0xFFffe070),
+      200: Color(0xFFd6ad1b),
     }),
-    const ColorSwatch(200, const {
-      50: const Color(0xFF81a56f),
-      100: const Color(0xFF7cc159),
-      200: const Color(0xFF345125),
+    ColorSwatch(200, {
+      50: Color(0xFF81a56f),
+      100: Color(0xFF7cc159),
+      200: Color(0xFF345125),
     }),
-    const ColorSwatch(200, const {
-      50: const Color(0xFFd7c0e2),
-      100: const Color(0xFFca90e5),
-      200: const Color(0xFF6e3f84),
+    ColorSwatch(200, {
+      50: Color(0xFFd7c0e2),
+      100: Color(0xFFca90e5),
+      200: Color(0xFF6e3f84),
     }),
-    const ColorSwatch(200, const {
-      50: const Color(0xFFce9a9a),
-      100: const Color(0xFFf94d56),
-      200: const Color(0xFF912d2d),
+    ColorSwatch(200, {
+      50: Color(0xFFce9a9a),
+      100: Color(0xFFf94d56),
+      200: Color(0xFF912d2d),
     }),
   ];
 
-  static const _icons = const <String>[
+  static const _icons = <String>[
     'assets/icons/length.png',
     'assets/icons/area.png',
     'assets/icons/volume.png',
@@ -112,19 +110,16 @@ class _CategoryRouteState extends State<CategoryRoute> {
   Future<Null> _retrieveLocalCategories() async {
     final json =
         DefaultAssetBundle.of(context).loadString('assets/regular_units.json');
-    final decoder = const JsonDecoder();
-    Map<String, List<Map<String, dynamic>>> data = decoder.convert(await json);
+    final decoder = JsonDecoder();
+    final data = decoder.convert(await json);
     var ci = 0;
     for (var key in data.keys) {
       final units = <Unit>[];
       for (var i = 0; i < data[key].length; i++) {
-        units.add(new Unit(
-          name: data[key][i]['name'],
-          conversion: data[key][i]['conversion'],
-        ));
+        units.add(Unit.fromJson(data[key][i]));
       }
       setState(() {
-        _categories.add(new Category(
+        _categories.add(Category(
           name: key,
           units: units,
           color: _baseColors[ci],
@@ -139,26 +134,26 @@ class _CategoryRouteState extends State<CategoryRoute> {
   Future<Null> _retrieveApiCategory() async {
     // Add a placeholder while we fetch the Currency category using the API
     setState(() {
-      _categories.add(new Category(
+      _categories.add(Category(
         name: apiCategory['name'],
         color: _baseColors.last,
       ));
     });
-    final api = new Api();
+    final api = Api();
     final jsonUnits = await api.getUnits(apiCategory['route']);
     // If the API errors out or we have no internet connection, this category
     // remains in placeholder mode (disabled)
     if (jsonUnits != null) {
       final units = <Unit>[];
       for (var unit in jsonUnits) {
-        units.add(new Unit(
+        units.add(Unit(
           name: unit['name'],
           conversion: unit['conversion'].toDouble(),
         ));
       }
       setState(() {
         _categories.removeLast();
-        _categories.add(new Category(
+        _categories.add(Category(
           name: apiCategory['name'],
           units: units,
           color: _baseColors.last,
@@ -181,12 +176,12 @@ class _CategoryRouteState extends State<CategoryRoute> {
     // list. The .toList() function does this.
     // For more details, see https://github.com/dart-lang/sdk/issues/27755
     if (portrait) {
-      return new ListView.builder(
+      return ListView.builder(
         itemBuilder: (BuildContext context, int index) => _categories[index],
         itemCount: _categories.length,
       );
     } else {
-      return new GridView.count(
+      return GridView.count(
         crossAxisCount: 2,
         childAspectRatio: 3.0,
         children: _categories,
@@ -197,27 +192,27 @@ class _CategoryRouteState extends State<CategoryRoute> {
   @override
   Widget build(BuildContext context) {
     if (_categories.isEmpty) {
-      return new Center(
-        child: new Container(
+      return Center(
+        child: Container(
           height: 180.0,
           width: 180.0,
-          child: new CircularProgressIndicator(),
+          child: CircularProgressIndicator(),
         ),
       );
     }
 
     // Based on the device size, figure out how to best lay out the list
     final deviceSize = MediaQuery.of(context).size;
-    final listView = new Container(
+    final listView = Container(
       color: Colors.white,
       padding: widget.footer
-          ? const EdgeInsets.only(
+          ? EdgeInsets.only(
               bottom: 16.0,
               left: 16.0,
               right: 16.0,
               top: 4.0,
             )
-          : const EdgeInsets.all(16.0),
+          : EdgeInsets.all(16.0),
       child: _buildCategoryWidgets(deviceSize.height > deviceSize.width),
     );
 
@@ -225,9 +220,9 @@ class _CategoryRouteState extends State<CategoryRoute> {
       return listView;
     }
 
-    final headerBar = new AppBar(
+    final headerBar = AppBar(
       elevation: 1.0,
-      title: new Text(
+      title: Text(
         'Unit Converter'.toUpperCase(),
         style: Theme.of(context).textTheme.display1.copyWith(
               color: Colors.white,
@@ -237,7 +232,7 @@ class _CategoryRouteState extends State<CategoryRoute> {
       backgroundColor: _appBarColor,
     );
 
-    return new Scaffold(
+    return Scaffold(
       appBar: headerBar,
       body: listView,
     );
