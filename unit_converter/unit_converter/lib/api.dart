@@ -3,9 +3,8 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:convert' show JSON;
-
-import 'package:flutter/services.dart';
+import 'dart:convert' show json, utf8;
+import 'dart:io';
 
 /// The REST API retrieves unit conversions for [Categories] that change.
 ///
@@ -16,8 +15,8 @@ import 'package:flutter/services.dart';
 ///   GET /currency: get a list of currencies
 ///   GET /currency/convert: get conversion from one currency amount to another
 class Api {
-  // We use the `http` package. More details: https://flutter.io/networking/
-  final httpClient = createHttpClient();
+  // We use the `dart:io` HttpClient. More details: https://flutter.io/networking/
+  final httpClient = HttpClient();
 
   /// The API endpoint we want to hit.
   ///
@@ -29,15 +28,9 @@ class Api {
   /// [category] is the category from which to retrieve units.
   /// Returns a list. Prints exception silently.
   Future<List> getUnits(String category) async {
-    // You can directly call httpClient.get() with a String as input,
-    // but to make things cleaner, we can pass in a Uri.
     final uri = Uri.https(url, '/$category');
     try {
-      final response = await httpClient.get(uri);
-      if (response.statusCode != 200) {
-        return null;
-      }
-      final jsonResponse = JSON.decode(response.body);
+      final jsonResponse = await getJson(uri);
       try {
         return jsonResponse['units'];
       } on Exception catch (e) {
@@ -55,16 +48,10 @@ class Api {
   /// Returns a double, which is the converted amount.
   Future<double> convert(
       String category, String amount, String fromUnit, String toUnit) async {
-    // You can directly call httpClient.get() with a String as input,
-    // but to make things cleaner, we can pass in a Uri.
     final uri = Uri.https(url, '/$category/convert',
         {'amount': amount, 'from': fromUnit, 'to': toUnit});
     try {
-      final response = await httpClient.get(uri);
-      if (response.statusCode != 200) {
-        return null;
-      }
-      final jsonResponse = JSON.decode(response.body);
+      final jsonResponse = await getJson(uri);
       try {
         return jsonResponse['conversion'].toDouble();
       } on Exception catch (e) {
@@ -75,5 +62,19 @@ class Api {
       print('Error: $e');
       return null;
     }
+  }
+
+  /// Fetches and decodes a Json object represented as a dart `Map`.
+  Future<Map<String, dynamic>> getJson(Uri uri) async {
+    final httpRequest = await httpClient.getUrl(uri);
+    final httpResponse = await httpRequest.close();
+    if (httpResponse.statusCode != HttpStatus.OK) {
+      return null;
+    }
+    // The response is sent as a Stream of bytes that we need to convert to a
+    // `String`.
+    final responseBody = await httpResponse.transform(utf8.decoder).join();
+    // Finally, the string is parsed into a Json object.
+    return json.decode(responseBody);
   }
 }
