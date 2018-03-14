@@ -19,8 +19,7 @@ const apiCategory = {
   'route': 'currency',
 };
 
-// TODO change this color
-const _appBarColor = Colors.green;
+final _backgroundColor = Colors.green[100];
 
 /// Category Route (page).
 ///
@@ -169,14 +168,14 @@ class _CategoryRouteState extends State<CategoryRoute> {
   ///
   /// For portrait, we use a [ListView]
   /// For landscape, we use a [GridView]
-  Widget _buildCategoryWidgets(bool portrait) {
+  Widget _buildCategoryWidgets(Orientation deviceOrientation) {
     // Why do we pass in `_categories.toList()` instead of just `_categories`?
     // Widgets are supposed to be deeply immutable objects. We're passing in
     // _categories to this GridView, which changes as we load in each
     // [Category]. So, each time _categories changes, we need to pass in a new
     // list. The .toList() function does this.
     // For more details, see https://github.com/dart-lang/sdk/issues/27755
-    if (portrait) {
+    if (deviceOrientation == Orientation.portrait) {
       return ListView.builder(
         itemBuilder: (BuildContext context, int index) => _categories[index],
         itemCount: _categories.length,
@@ -203,11 +202,12 @@ class _CategoryRouteState extends State<CategoryRoute> {
     }
 
     // Based on the device size, figure out how to best lay out the list
-    final deviceSize = MediaQuery.of(context).size;
+    // You can also use MediaQuery.of(context).size to check orientation
+    assert(debugCheckHasMediaQuery(context));
     final listView = Container(
-      color: Colors.green[100],
+      color: _backgroundColor,
       padding: EdgeInsets.symmetric(horizontal: 8.0),
-      child: _buildCategoryWidgets(deviceSize.height > deviceSize.width),
+      child: _buildCategoryWidgets(MediaQuery.of(context).orientation),
     );
 
     if (widget.footer) {
@@ -222,7 +222,7 @@ class _CategoryRouteState extends State<CategoryRoute> {
               color: Colors.grey[800],
             ),
       ),
-      backgroundColor: _appBarColor[100],
+      backgroundColor: _backgroundColor,
       leading: Icon(
         Icons.clear,
         color: Colors.grey[800],
