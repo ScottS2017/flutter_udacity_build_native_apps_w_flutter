@@ -136,7 +136,7 @@ class _ConverterRouteState extends State<ConverterRoute> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
+          children: [
             Icon(
               Icons.error_outline,
               size: 180.0,
@@ -212,7 +212,7 @@ class _ConverterRouteState extends State<ConverterRoute> {
       padding: _padding,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
+        children: [
           // This is the widget that accepts text input. In this case, it
           // accepts numbers and calls the onChanged property on update.
           // You can read more about it here: https://flutter.io/text-input
@@ -238,16 +238,19 @@ class _ConverterRouteState extends State<ConverterRoute> {
       ),
     );
 
-    final arrows = Icon(
-      Icons.compare_arrows,
-      size: 40.0,
+    final arrows = RotatedBox(
+      quarterTurns: 1,
+      child: Icon(
+        Icons.compare_arrows,
+        size: 40.0,
+      ),
     );
 
     final output = Padding(
       padding: _padding,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
+        children: [
           InputDecorator(
             child: Text(
               _convertedValue,
@@ -286,43 +289,19 @@ class _ConverterRouteState extends State<ConverterRoute> {
       ),
     );
 
-    // Based on the box constraints of our device, figure out how to best
-    // lay out our conversion screen
-    final conversionScreen = LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-        if (constraints.maxHeight > constraints.maxWidth) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              input,
-              RotatedBox(
-                quarterTurns: 1,
-                child: arrows,
-              ),
-              output,
-            ],
-          );
-        } else {
-          return Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Expanded(
-                child: input,
-              ),
-              arrows,
-              Expanded(
-                child: output,
-              ),
-            ],
-          );
-        }
-      },
+    var converter = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        input,
+        arrows,
+        output,
+      ],
     );
 
 // TODO: use this in backdrop in later PR
 //    final selectCategoryScreen = Column(
 //      mainAxisAlignment: MainAxisAlignment.end,
-//      children: <Widget>[
+//      children: [
 //        GestureDetector(
 //          onTap: () {
 //            showModalBottomSheet<Null>(
@@ -330,7 +309,7 @@ class _ConverterRouteState extends State<ConverterRoute> {
 //                builder: (BuildContext context) {
 //                  return Column(
 //                    mainAxisAlignment: MainAxisAlignment.start,
-//                    children: <Widget>[
+//                    children: [
 //                      selectCategoryHeader,
 //                      Expanded(
 //                        child: CategoryRoute(
@@ -346,9 +325,26 @@ class _ConverterRouteState extends State<ConverterRoute> {
 //      ],
 //    );
 
+    // Based on the orientation of the parent widget, figure out how to best
+    // lay out our converter.
     return Padding(
       padding: _padding,
-      child: conversionScreen,
+      child: OrientationBuilder(
+        builder: (BuildContext context, Orientation orientation) {
+          if (orientation == Orientation.portrait) {
+            return converter;
+          } else {
+            return SingleChildScrollView(
+              child: Center(
+                child: Container(
+                  width: 450.0,
+                  child: converter,
+                ),
+              ),
+            );
+          }
+        },
+      ),
     );
   }
 }
