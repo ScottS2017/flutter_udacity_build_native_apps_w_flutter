@@ -7,12 +7,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'package:unit_converter/api.dart';
-import 'package:unit_converter/category_route.dart';
 import 'package:unit_converter/unit.dart';
 
 const _padding = EdgeInsets.all(16.0);
 const _margin = EdgeInsets.symmetric(vertical: 16.0);
-const _bottomSheetBorderRadius = Radius.circular(32.0);
 
 /// Converter Route (page) where users can input amounts to convert.
 class ConverterRoute extends StatefulWidget {

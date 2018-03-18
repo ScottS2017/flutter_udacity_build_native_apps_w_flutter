@@ -11,14 +11,6 @@ import 'package:unit_converter/api.dart';
 import 'package:unit_converter/category.dart';
 import 'package:unit_converter/unit.dart';
 
-/// For this app, the only category (endpoint) we retrieve from an API is Currency.
-///
-/// If we had more, we could keep a List of categories here.
-const apiCategory = {
-  'name': 'Currency',
-  'route': 'currency',
-};
-
 final _backgroundColor = Colors.green[100];
 
 /// Category Route (page).
@@ -41,8 +33,8 @@ class _CategoryRouteState extends State<CategoryRoute> {
   // Dart Usage, see https://www.dartlang.org/guides/language/effective-dart/usage
   final _categories = <Category>[];
   static const _baseColors = <ColorSwatch>[
-    ColorSwatch(0xFF579186, {
-      50: Color(0xFF579186),
+    ColorSwatch(0xFF6AB7A8, {
+      50: Color(0xFF6AB7A8),
       100: Color(0xFF0abc9b),
       200: Color(0xFF1f685a),
     }),
