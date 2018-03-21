@@ -8,21 +8,15 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 import 'package:unit_converter/api.dart';
+import 'package:unit_converter/backdrop.dart';
 import 'package:unit_converter/category.dart';
+import 'package:unit_converter/category_tile.dart';
+import 'package:unit_converter/unit_converter.dart';
 import 'package:unit_converter/unit.dart';
 
-final _backgroundColor = Colors.green[100];
-
-/// Category Route (page).
-///
-/// This is the "home" page of the Unit Converter. It shows a header bar and
-/// a grid of [Categories].
+/// Loads in unit conversion data and displays the data
 class CategoryRoute extends StatefulWidget {
-  final bool footer;
-
-  const CategoryRoute({
-    this.footer,
-  });
+  const CategoryRoute();
 
   @override
   _CategoryRouteState createState() => _CategoryRouteState();
@@ -86,6 +80,9 @@ class _CategoryRouteState extends State<CategoryRoute> {
     'assets/icons/currency.png',
   ];
 
+  var _defaultCategory;
+  var _currentCategory;
+
   @override
   Future<Null> didChangeDependencies() async {
     super.didChangeDependencies();
@@ -99,6 +96,12 @@ class _CategoryRouteState extends State<CategoryRoute> {
     }
   }
 
+  void onCategoryTap(Category category) {
+    setState(() {
+      _currentCategory = category;
+    });
+  }
+
   /// Retrieves a list of [Categories] and their [Unit]s
   Future<Null> _retrieveLocalCategories() async {
     final json = DefaultAssetBundle
@@ -106,21 +109,27 @@ class _CategoryRouteState extends State<CategoryRoute> {
         .loadString('assets/data/regular_units.json');
     final decoder = JsonDecoder();
     final data = decoder.convert(await json);
-    var ci = 0;
+    var categoryIndex = 0;
     for (var key in data.keys) {
-      final units = <Unit>[];
-      for (var i = 0; i < data[key].length; i++) {
-        units.add(Unit.fromJson(data[key][i]));
+      if (data is! Map) {
+        throw('Data retrieved from API is not a Map');
       }
+      final List<Unit> units =
+          data[key].map<Unit>((dynamic data) => Unit.fromJson(data)).toList();
+
+      var category = Category(
+        name: key,
+        units: units,
+        color: _baseColors[categoryIndex],
+        iconLocation: _icons[categoryIndex],
+      );
       setState(() {
-        _categories.add(Category(
-          name: key,
-          units: units,
-          color: _baseColors[ci],
-          iconLocation: _icons[ci],
-        ));
+        if (categoryIndex == 0) {
+          _defaultCategory = category;
+        }
+        _categories.add(category);
       });
-      ci += 1;
+      categoryIndex += 1;
     }
   }
 
@@ -140,10 +149,7 @@ class _CategoryRouteState extends State<CategoryRoute> {
     if (jsonUnits != null) {
       final units = <Unit>[];
       for (var unit in jsonUnits) {
-        units.add(Unit(
-          name: unit['name'],
-          conversion: unit['conversion'].toDouble(),
-        ));
+        units.add(Unit.fromJson(unit));
       }
       setState(() {
         _categories.removeLast();
@@ -171,14 +177,24 @@ class _CategoryRouteState extends State<CategoryRoute> {
     // For more details, see https://github.com/dart-lang/sdk/issues/27755
     if (deviceOrientation == Orientation.portrait) {
       return ListView.builder(
-        itemBuilder: (BuildContext context, int index) => _categories[index],
+        itemBuilder: (BuildContext context, int index) {
+          return CategoryTile(
+            category: _categories[index],
+            onTap: onCategoryTap,
+          );
+        },
         itemCount: _categories.length,
       );
     } else {
       return GridView.count(
         crossAxisCount: 2,
         childAspectRatio: 3.0,
-        children: _categories,
+        children: _categories.map((Category c) {
+          return CategoryTile(
+            category: c,
+            onTap: onCategoryTap,
+          );
+        }).toList(),
       );
     }
   }
@@ -198,32 +214,24 @@ class _CategoryRouteState extends State<CategoryRoute> {
     // Based on the device size, figure out how to best lay out the list
     // You can also use MediaQuery.of(context).size to check orientation
     assert(debugCheckHasMediaQuery(context));
-    final listView = Container(
-      color: _backgroundColor,
-      padding: EdgeInsets.symmetric(horizontal: 8.0),
+    final listView = Padding(
+      padding: EdgeInsets.only(
+        left: 8.0,
+        right: 8.0,
+        bottom: 48.0,
+      ),
       child: _buildCategoryWidgets(MediaQuery.of(context).orientation),
     );
 
-    if (widget.footer) {
-      return listView;
-    }
-
-    final appBar = AppBar(
-      elevation: 0.0,
-      title: Text(
-        'Unit Converter',
-        style: Theme.of(context).textTheme.title,
-      ),
-      backgroundColor: _backgroundColor,
-      leading: Icon(
-        Icons.menu,
-        color: Colors.grey[800],
-      ),
-    );
-
-    return Scaffold(
-      appBar: appBar,
-      body: listView,
+    return Backdrop(
+      currentCategory:
+          _currentCategory == null ? _defaultCategory : _currentCategory,
+      frontPanel: _currentCategory == null
+          ? UnitConverter(category: _defaultCategory)
+          : UnitConverter(category: _currentCategory),
+      backPanel: listView,
+      frontTitle: Text('Unit Converter'),
+      backTitle: Text('Select a Category'),
     );
   }
 }
