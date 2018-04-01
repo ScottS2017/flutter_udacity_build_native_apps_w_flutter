@@ -5,6 +5,7 @@
 // To keep your imports tidy, follow the ordering guidelines at
 // https://www.dartlang.org/guides/language/effective-dart/style#ordering
 import 'package:flutter/material.dart';
+import 'package:meta/meta.dart';
 
 import 'package:unit_converter/unit.dart';
 
@@ -15,14 +16,17 @@ class Category {
   final ColorSwatch color;
   final String iconLocation;
 
+  /// Stores information about a [Category].
+  ///
   /// A [Category] saves the name of the Category (e.g. Length), a list of its
   /// units for conversions (e.g. millimeter, meter), its color for the UI,
-  /// and the icon that is associated with it (e.g. ruler).
+  /// and the icon that represents it (e.g. ruler).
   const Category({
-    Key key,
-    this.name,
-    this.units,
-    this.color,
+    @required this.name,
+    @required this.units,
+    @required this.color,
     this.iconLocation,
-  });
+  })  : assert(name != null),
+        assert(color != null),
+        assert(units != null);
 }
