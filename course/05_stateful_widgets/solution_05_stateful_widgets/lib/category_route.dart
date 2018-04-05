@@ -71,6 +71,7 @@ class _CategoryRouteState extends State<CategoryRoute> {
   /// Returns a list of mock [Unit]s.
   List<Unit> _retrieveUnitList(String categoryName) {
     return List.generate(10, (int i) {
+      i += 1;
       return Unit(
         name: '$categoryName Unit $i',
         conversion: i.toDouble(),
@@ -82,7 +83,7 @@ class _CategoryRouteState extends State<CategoryRoute> {
   Widget build(BuildContext context) {
     final listView = Container(
       color: _backgroundColor,
-      padding: EdgeInsets.all(16.0),
+      padding: EdgeInsets.symmetric(horizontal: 8.0),
       child: _buildCategoryWidgets(),
     );
 
