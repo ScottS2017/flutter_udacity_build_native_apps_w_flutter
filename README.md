@@ -1,9 +1,36 @@
-This contains the projects for the Udacity course.
+This repo contains the projects for the Udacity course.
 
-## Style Guide
+# Getting Started
+This repo contains everything you need for the Udacity course. The Unit Converter app has been broken down into sub-projects, which match a 2-lesson Udacity course. To get started, [set up your development environment](https://flutter.io/setup) and clone this repo, using `git clone git@github.com:flutter/udacity-course.git` or `git clone https://github.com/flutter/udacity-course.git`.
+
+## Building the Complete Unit Converter App
+### Android Studio/IntelliJ
+1. Open the IDE and select `Open an existing Android Studio project`.
+2. Choose the `unit_converter` project folder, located in this repo at [`/unit_converter/unit_converter`](https://github.com/flutter/udacity-course/tree/master/unit_converter/unit_converter).
+3. Make sure your Flutter SDK is set and dependencies have been updated.
+4. Make sure your device/emulator is running.
+5. Press the green Play button to run the app.
+
+### Command Line
+1. Run `cd ~/<repo location>/unit_converter/unit_converter`.
+2. Make sure your device/emulator is running.
+3. Run `flutter run`.
+
+## Building Each Coding Exercise
+Each coding exercise for the Udacity course is located in the [`course` directory](https://github.com/flutter/udacity-course/tree/master/course). Each exercise is split into a standalone Task project and Solution project. The Solution is one of many possible solutions. You can compare your implementation with the solution using the `diff` command.
+
+### Android Studio/IntelliJ
+1. Open the IDE and select `Open an existing Android Studio project`.
+2. Find the coding exercise you want to do and choose the `task_` project folder. For example, for the second coding exercise, `02_category_widget`, choose the `task_02_category_widget` project located in this repo at [`/course/2_category_widget/task_02_category_widget`](https://github.com/flutter/udacity-course/tree/master/course/02_category_widget/task_02_category_widget).
+3. Make sure your Flutter SDK is set and dependencies have been updated.
+4. Make sure your device/emulator is running.
+5. Press the green Play button to run the app.
+6. Follow the README and complete the TODOs in the coding exercise.
+
+# Style Guide
 Use strong mode.
 
-## Contribution Guidelines
+# Contribution Guidelines
 Setting up:
 1. Fork `https://github.com/flutter/udacity-course` into your own GitHub account
 2. `git clone git@github.com:<your_name_here>/udacity-course.git`
