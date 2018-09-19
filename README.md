@@ -1,5 +1,5 @@
 ## Note:
-* This version of the course contains modified TODOs from Scott Stoll, of Flutter Productions. The TODOs have been changed in an attempt to ensure students will understand exactly what is required of them. As this is a beginner course it was felt the TODOs as written gave too little guidance, resulting in students being forced to do hours or days of research as they attempted to understand what was expected of them.
+* This version of the course contains modified TODOs from Scott Stoll, of Flutter Productions (https://flutter.productions). The TODOs have been changed in an attempt to ensure students will understand exactly what is required of them. As this is a beginner course it was felt the TODOs as written gave too little guidance, resulting in students being forced to do hours or days of research as they attempted to understand what was expected of them.
 
 * Though that is an excellent way to have the TODOs for an advanced course, my own teaching experience has lead me to believe beginners need a much more step-by-step approach, with extremely clear direction.
 
