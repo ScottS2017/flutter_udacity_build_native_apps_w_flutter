@@ -3,7 +3,7 @@
 
 * Though that is an excellent way to have the TODOs for an advanced course, my own teaching experience has lead me to believe beginners need a much more step-by-step approach, with extremely clear direction.
 
-* Finally, this course is excellent for the beginner, teaching good habits of making variable out of Widgets or Widget trees where possible and then calling these variables in. Another good habit that accomplishes much the same thing is the use of the const keyword when declaring a Widget.
+* Finally, this course is excellent for the beginner, teaching good habits of making variables out of Widgets or Widget trees where possible, and then using these variables in a build() method. Another good habit that accomplishes much the same thing is proper use of the const keyword when declaring a Widget.
 
 ------
 
