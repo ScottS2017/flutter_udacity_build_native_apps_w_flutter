@@ -47,7 +47,13 @@ class Category extends StatelessWidget {
 
   /// Navigates to the [ConverterRoute].
   void _navigateToConverter(BuildContext context) {
-    // TODO: Using the Navigator, navigate to the [ConverterRoute]
+    // TODO 1) Using the Navigator, navigate to the [ConverterRoute]
+    // *****************************************************************
+    // 1) Use a Navigator widget to push a MaterialPageRoute<Null>
+    // 2) The builder needs to return a Scaffold. Fill out the AppBar with text being the name variable passed in above and the text style should be display1.
+    // Still in the AppBar, use the centerTitle parameter and set the background color to the color variable passed in above.
+    // 3) The body of the Scaffold should be a ConverterRoute. Color, name and units are all passed in above.
+    // *****************************************************************
   }
 
   /// Builds a custom widget that shows [Category] information.
@@ -69,7 +75,7 @@ class Category extends StatelessWidget {
           splashColor: color,
           // We can use either the () => function() or the () { function(); }
           // syntax.
-          // TODO: Update this onTap property to call _navigateToConverter()
+          // TODO 2) Update this onTap property to call _navigateToConverter() ******
           onTap: () {
             print('I was tapped!');
           },

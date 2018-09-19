@@ -26,6 +26,7 @@ class Category extends StatelessWidget {
   ///
   /// A [Category] saves the name of the Category (e.g. 'Length'), its color for
   /// the UI, and the icon that represents it (e.g. a ruler).
+  //
   // While the @required checks for whether a named parameter is passed in,
   // it doesn't check whether the object passed in is null. We check that
   // in the assert statement.

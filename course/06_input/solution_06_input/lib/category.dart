@@ -87,6 +87,7 @@ class Category extends StatelessWidget {
         height: _rowHeight,
         child: InkWell(
           borderRadius: _borderRadius,
+          // Completed: Use the highlight and splash colors from the ColorSwatch
           highlightColor: color['highlight'],
           splashColor: color['splash'],
           // We can use either the () => function() or the () { function(); }

@@ -16,11 +16,11 @@ final _backgroundColor = Colors.green[100];
 ///
 /// While it is named CategoryRoute, a more apt name would be CategoryScreen,
 /// because it is responsible for the UI at the route's destination.
-// TODO: Make CategoryRoute a StatefulWidget
+// TODO 1) Make CategoryRoute a StatefulWidget  *****  HINT: use Alt+Enter
 class CategoryRoute extends StatelessWidget {
   const CategoryRoute();
 
-  // TODO: Create State object for the CategoryRoute
+  // TODO 2) Create State object for the CategoryRoute  *****  HINT: This was taken care of automatically if you used Alt+Enter above
 
   static const _categoryNames = <String>[
     'Length',
@@ -67,11 +67,7 @@ class CategoryRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: Instead of re-creating a list of Categories in every build(),
-    // save this as a variable inside the State object and create
-    // the list at initialization (in initState()).
-    // This way, you also don't have to pass in the list of categories to
-    // _buildCategoryWidgets()
+    // TODO 3) Instead of re-creating a list of Categories in every build(), save this as a variable inside the State object and create the list at initialization (in initState()). This way, you also don't have to pass in the list of categories to _buildCategoryWidgets().  ***** HINT: Be sure that your new variable is not instantiated inside the build method. The idea here is to create the Categories only once, instead of recreating them every time we run the build() method.
     final categories = <Category>[];
 
     for (var i = 0; i < _categoryNames.length; i++) {

@@ -42,14 +42,12 @@ class CategoryRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: Create a list of the eight Categories, using the names and colors
-    // from above. Use a placeholder icon, such as `Icons.cake` for each
-    // Category. We'll add custom icons later.
+    // TODO 1) Create a list of the eight Categories, using the names and colors from above. Use a placeholder icon, such as `Icons.cake` for each Category. We'll add custom icons later. ******** Here you're expected to create a list of Category widgets and loop through it to assign a name, color and icon to each Category in the list.
 
-    // TODO: Create a list view of the Categories
+    // TODO 2) Create a list view of the Categories *** Here you're expected to create a list view inside of this Container and then it's children will be the list you made above. You can just put the
     final listView = Container();
 
-    // TODO: Create an App Bar
+    // TODO 3) Create an App Bar ***** Use Control + Spacebar to see the different parameters you can use in an AppBar. Use this to fill out the title, background and elevation. The solution code uses member variables for the values.
     final appBar = AppBar();
 
     return Scaffold(

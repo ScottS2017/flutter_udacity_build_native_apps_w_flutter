@@ -18,7 +18,7 @@ class ConverterRoute extends StatelessWidget {
   final List<Unit> units;
 
   /// This [ConverterRoute] requires the name, color, and units to not be null.
-  // TODO: Pass in the [Category]'s name and color
+  // TODO 3) Pass in the [Category]'s name and color   ***** Change the constructor to take a name and color. Ensure they're required and assert they aren't null.
   const ConverterRoute({
     @required this.units,
   }) : assert(units != null);
@@ -27,7 +27,7 @@ class ConverterRoute extends StatelessWidget {
   Widget build(BuildContext context) {
     // Here is just a placeholder for a list of mock units
     final unitWidgets = units.map((Unit unit) {
-      // TODO: Set the color for this Container
+      // TODO 4)  Set the color for this Container
       return Container(
         margin: EdgeInsets.all(8.0),
         padding: EdgeInsets.all(16.0),

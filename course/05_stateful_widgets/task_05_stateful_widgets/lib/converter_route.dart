@@ -13,7 +13,7 @@ import 'package:task_05_stateful_widgets/unit.dart';
 ///
 /// While it is named ConverterRoute, a more apt name would be ConverterScreen,
 /// because it is responsible for the UI at the route's destination.
-// TODO: Make ConverterRoute a StatefulWidget
+// TODO 4) Make ConverterRoute a StatefulWidget  *****  HINT: use Alt+Enter
 class ConverterRoute extends StatelessWidget {
   /// This [Category]'s name.
   final String name;
@@ -33,13 +33,13 @@ class ConverterRoute extends StatelessWidget {
         assert(color != null),
         assert(units != null);
 
-  // TODO: Create State object for the ConverterRoute
+  // TODO 5) Create State object for the ConverterRoute  *****  HINT: This was taken care of automatically if you used Alt+Enter above
 
   @override
   Widget build(BuildContext context) {
     // Here is just a placeholder for a list of mock units
-    // TODO: Once the build() function is inside the State object,
-    // you'll have to reference this using `widget.units`
+
+    // TODO 5) Once the build() function is inside the State object, you'll have to reference this using `widget.units`. ***** HINT: widget.variableName is how you refer to a variable inside the StatefulWidget when you need to access it from the State. If you think of the StatefulWidget as being the parent of the State, then widget.variableName is a lot like calling parent.variableName
     final unitWidgets = units.map((Unit unit) {
       return Container(
         color: color,
