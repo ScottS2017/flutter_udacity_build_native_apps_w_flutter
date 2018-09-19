@@ -1,3 +1,12 @@
+## Note:
+* This version of the course contains modified TODOs from Scott Stoll, of Flutter Productions. The TODOs have been changed in an attempt to ensure students will understand exactly what is required of them. As this is a beginner course it was felt the TODOs as written gave too little guidance, resulting in students being forced to do hours or days of research as they attempted to understand what was expected of them.
+
+* Though that is an excellent way to have the TODOs for an advanced course, my own teaching experience has lead me to believe beginners need a much more step-by-step approach, with extremely clear direction.
+
+* Finally, this course is excellent for the beginner, teaching good habits of making variable out of Widgets or Widget trees where possible and then calling these variables in. Another good habit that accomplishes much the same thing is the use of the const keyword when declaring a Widget.
+
+------
+
 # [Build Native Mobile Apps with Flutter](https://www.udacity.com/course/ud905)
 
 This repo contains everything you need for [Build Native Mobile Apps with Flutter, by Google and Udacity](https://www.udacity.com/course/ud905). The Unit Converter app has been broken down into sub-projects. To get started, [set up your development environment](https://flutter.io/setup) and clone this repo, using `git clone git@github.com:flutter/udacity-course.git` or `git clone https://github.com/flutter/udacity-course.git`.
