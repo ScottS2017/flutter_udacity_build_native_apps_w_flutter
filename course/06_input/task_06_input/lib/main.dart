@@ -25,7 +25,7 @@ class UnitConverterApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Unit Converter',
-      // TODO: Fill out the theme parameter ***** HINT: Use Control+Space to add a theme.
+      // TODO 2) Fill out the theme parameter ***** HINT: Use Control+Space to add a theme. This will take a theme data object. Fill out the text theme, primary color and text selection handle color. The text theme will use Theme.of(context).textTheme.apply ... fill out body and display colors.
       home: CategoryRoute(),
     );
   }

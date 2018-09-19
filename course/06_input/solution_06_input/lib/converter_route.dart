@@ -38,6 +38,7 @@ class ConverterRoute extends StatefulWidget {
 }
 
 class _ConverterRouteState extends State<ConverterRoute> {
+  // COMPLETED: Set some variables, such as for keeping track of the user's input value and units
   Unit _fromValue;
   Unit _toValue;
   double _inputValue;
@@ -45,12 +46,15 @@ class _ConverterRouteState extends State<ConverterRoute> {
   List<DropdownMenuItem> _unitMenuItems;
   bool _showValidationError = false;
 
+  // COMPLETED: Determine whether you need to override anything, such as initState()
   @override
   void initState() {
     super.initState();
     _createDropdownMenuItems();
     _setDefaults();
   }
+
+  // COMPLETED: Add other helper functions. We've given you one, _format()
 
   /// Creates fresh list of [DropdownMenuItem] widgets, given a list of [Unit]s.
   void _createDropdownMenuItems() {
@@ -183,6 +187,8 @@ class _ConverterRouteState extends State<ConverterRoute> {
 
   @override
   Widget build(BuildContext context) {
+
+    // COMPLETED: Create the 'input' group of widgets. This is a Column that includes the output value, and 'from' unit [Dropdown].
     final input = Padding(
       padding: _padding,
       child: Column(
@@ -211,6 +217,7 @@ class _ConverterRouteState extends State<ConverterRoute> {
       ),
     );
 
+    // COMPLETED: Create a compare arrows icon.
     final arrows = RotatedBox(
       quarterTurns: 1,
       child: Icon(
@@ -219,6 +226,7 @@ class _ConverterRouteState extends State<ConverterRoute> {
       ),
     );
 
+    // COMPLETED: Create the 'output' group of widgets.
     final output = Padding(
       padding: _padding,
       child: Column(
@@ -242,6 +250,7 @@ class _ConverterRouteState extends State<ConverterRoute> {
       ),
     );
 
+    // COMPLETED: Return the input, arrows, and output widgets, wrapped in a Column
     final converter = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
